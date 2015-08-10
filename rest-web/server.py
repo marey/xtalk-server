@@ -3,8 +3,7 @@ __author__ = 'MuRui'
 
 import tornado.ioloop
 import tornado.web
-import os
-from model import *
+
 from handler import *
 
 
@@ -35,7 +34,9 @@ class UserUploadPhotoHandler(tornado.web.RequestHandler):
 application = tornado.web.Application([
     (r"/", MainHandler),
     (r"/user", UserHandler),
+    (r"/user/black", UserBlackHandler),
     (r"/test", TestHandler),
+
     (r"/user/upload_photo", UserUploadPhotoHandler),
 ])
 

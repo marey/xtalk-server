@@ -2,7 +2,36 @@
 
 __author__ = 'murui'
 
+from datetime import datetime
+
 from mongoengine import *
+
+
+class Tag(EmbeddedDocument):
+    tag_name = StringField()
+    # 创建时间
+    created = DateTimeField(default=datetime.now)
+
+
+class SysChannel(Document):
+    channel_name = StringField()
+    # channel_name = ReferenceField(User)
+    tags = ListField(EmbeddedDocumentField(Tag))
+    # 创建时间
+    created = DateTimeField(default=datetime.now)
+
+
+class UserChannel(EmbeddedDocument):
+    channel_name = StringField()
+    # 创建时间
+    created = DateTimeField(default=datetime.now)
+
+
+class BlackUser(EmbeddedDocument):
+    # 黑名单的地址
+    user_id = StringField()
+    # 拖黑时间
+    created = DateTimeField(default=datetime.now)
 
 # 用户文档
 class User(Document):
@@ -28,8 +57,19 @@ class User(Document):
     user_telephone = StringField()
     # 用户状态
     user_status = IntField()
+    # 用户自定义频道
+    channels = ListField(EmbeddedDocumentField(UserChannel))
+    # 用户的黑名单列表
+    black_users = ListField(EmbeddedDocumentField(BlackUser))
+    # 创建时间
+    created = DateTimeField(default=datetime.now)
 
 
-class Paper(Document):
+class State(Document):
+    """
+        用户状态的内容
+    """
+    # 图片所在的URL地址
+    img_urls = ListField(StringField())
+    # 状态的内容
     content = StringField()
-    author = ReferenceField(User)

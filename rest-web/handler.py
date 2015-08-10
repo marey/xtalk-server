@@ -3,13 +3,9 @@
 __author__ = 'murui'
 
 import tornado.web
-import json
-from message import MessageUtils
-import datetime
-import time
-from mongoengine import *
-from model import *
 
+from message import MessageUtils
+from model import *
 import utils
 from rong import *
 
@@ -232,3 +228,73 @@ class UserHandler(BaseHandler):
         photo = self.get_argument("photo", default=None)
         if type in ["0", "1"] and photo is None:
             raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "photo")
+
+
+# 用户登录处理
+class UserBlackHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        """
+            用户黑名单的获取
+        :return:
+        """
+        code = "200"
+        message = ""
+        result = ""
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            # result = self.get_user_info()
+
+        except tornado.web.HTTPError, e:
+            code = e.status_code
+            message = e.log_message.format(e.args)
+
+        # 将数据整理后返回
+        response = {}
+
+        response["code"] = code
+        response["message"] = message
+        response["result"] = result
+
+        self.write(json.dumps(response))
+        self.finish()
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def put(self):
+        """
+            用户黑名单的添加
+        :return:
+        """
+        code = "200"
+        message = ""
+        result = ""
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("black_user_id")
+            self.add_black_user()
+
+        except tornado.web.HTTPError, e:
+            code = e.status_code
+            message = e.log_message.format(e.args)
+
+        # 将数据整理后返回
+        response = {}
+
+        response["code"] = code
+        response["message"] = message
+        response["result"] = result
+
+        self.write(json.dumps(response))
+        self.finish()
+
+    def add_black_user(self):
+        user_id = self.get_argument("user_id")
+        black_user_id = self.get_argument("black_user_id")
+        black_user = BlackUser(user_id=black_user_id)
+        User.objects(id=user_id).update_one(push__black_users=black_user)
