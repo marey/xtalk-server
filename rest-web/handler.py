@@ -230,6 +230,84 @@ class UserHandler(BaseHandler):
             raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "photo")
 
 
+# 用户推荐频道
+class UserChannelHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def post(self):
+        """
+            用户推荐频道的添加
+        :return:
+        """
+        code = "200"
+        message = ""
+        result = ""
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("channel_name")
+            self.add_user_channel()
+
+        except tornado.web.HTTPError, e:
+            code = e.status_code
+            message = e.log_message.format(e.args)
+
+        # 将数据整理后返回
+        response = {}
+
+        response["code"] = code
+        response["message"] = message
+        response["result"] = result
+
+        self.write(json.dumps(response))
+        self.finish()
+
+    def add_user_channel(self):
+        user_id = self.get_argument("user_id")
+        channel_name = self.get_argument("channel_name").trim()
+        user_channel = UserChannel(id=hash(channel_name), channel_name=channel_name).save()
+        User.objects(id=user_id).update_one(push__authors=user_channel)
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        """
+            用户推荐频道的添加
+        :return:
+        """
+        code = "200"
+        message = ""
+        result = ""
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            result = self.get_user_channel()
+
+        except tornado.web.HTTPError, e:
+            code = e.status_code
+            message = e.log_message.format(e.args)
+
+        # 将数据整理后返回
+        response = {}
+
+        response["code"] = code
+        response["message"] = message
+        response["result"] = result
+
+        self.write(json.dumps(response))
+        self.finish()
+
+    def get_user_channel(self):
+        user_id = self.get_argument("user_id")
+
+        channels = SysChannel.objects.order_by("+order_by", "+tags__order_by")
+
+        result = {}
+
+        return result
+
 # 用户登录处理
 class UserBlackHandler(BaseHandler):
     @tornado.web.asynchronous
@@ -246,7 +324,7 @@ class UserBlackHandler(BaseHandler):
         try:
             # 检查参数的传入
             self.check_params_exists("user_id")
-            # result = self.get_user_info()
+            result = self.get_black_users()
 
         except tornado.web.HTTPError, e:
             code = e.status_code
@@ -261,6 +339,25 @@ class UserBlackHandler(BaseHandler):
 
         self.write(json.dumps(response))
         self.finish()
+
+    def get_black_users(self):
+
+        user_id = self.get_argument("user_id")
+        user = User.objects(id=user_id).only("black_users").first()
+        map_list = []
+        if user is not None and user.black_users is not None:
+
+            for blackUser in user.black_users:
+                user_info = User.objects(id=blackUser.user_id).only("user_name", "user_photo_url").first()
+                if user_info is not None:
+                    user_map = {"user_id": blackUser.user_id, "name": user_info.user_name,
+                                "photo": user_info.user_photo_url}
+                    map_list.append(user_map)
+
+        if len(map_list) > 0:
+            return map_list
+        else:
+            return ""
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -298,3 +395,40 @@ class UserBlackHandler(BaseHandler):
         black_user_id = self.get_argument("black_user_id")
         black_user = BlackUser(user_id=black_user_id)
         User.objects(id=user_id).update_one(push__black_users=black_user)
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def delete(self):
+        """
+            用户黑名单的删除
+        :return:
+        """
+        code = "200"
+        message = ""
+        result = ""
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("black_user_id")
+            self.del_black_user()
+
+        except tornado.web.HTTPError, e:
+            code = e.status_code
+            message = e.log_message.format(e.args)
+
+        # 将数据整理后返回
+        response = {}
+
+        response["code"] = code
+        response["message"] = message
+        response["result"] = result
+
+        self.write(json.dumps(response))
+        self.finish()
+
+    def del_black_user(self):
+        user_id = self.get_argument("user_id")
+        black_user_id = self.get_argument("black_user_id")
+        black_user = BlackUser(user_id=black_user_id)
+        User.objects(id=user_id).update_one(pull__black_users=black_user)

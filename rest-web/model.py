@@ -7,21 +7,27 @@ from datetime import datetime
 from mongoengine import *
 
 
-class Tag(EmbeddedDocument):
+class SysTag(Document):
+    # 标签名称
     tag_name = StringField()
+    # 排序顺序
+    order_by = IntField()
     # 创建时间
     created = DateTimeField(default=datetime.now)
 
 
 class SysChannel(Document):
+    #  频道名称
     channel_name = StringField()
+    # 排序顺序
+    order_by = IntField()
     # channel_name = ReferenceField(User)
-    tags = ListField(EmbeddedDocumentField(Tag))
+    tags = ListField(ReferenceField(SysTag))
     # 创建时间
     created = DateTimeField(default=datetime.now)
 
 
-class UserChannel(EmbeddedDocument):
+class UserChannel(Document):
     channel_name = StringField()
     # 创建时间
     created = DateTimeField(default=datetime.now)
@@ -32,6 +38,7 @@ class BlackUser(EmbeddedDocument):
     user_id = StringField()
     # 拖黑时间
     created = DateTimeField(default=datetime.now)
+
 
 # 用户文档
 class User(Document):
@@ -58,7 +65,7 @@ class User(Document):
     # 用户状态
     user_status = IntField()
     # 用户自定义频道
-    channels = ListField(EmbeddedDocumentField(UserChannel))
+    channels = ListField(ReferenceField(UserChannel))
     # 用户的黑名单列表
     black_users = ListField(EmbeddedDocumentField(BlackUser))
     # 创建时间
