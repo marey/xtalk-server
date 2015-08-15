@@ -85,4 +85,7 @@ class mytest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+
+    value = "这个0"
+    print hash(value)

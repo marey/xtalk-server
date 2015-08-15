@@ -80,3 +80,19 @@ class State(Document):
     img_urls = ListField(StringField())
     # 状态的内容
     content = StringField()
+
+
+class Words(Document):
+    # id 是md5加密的
+    word_id = StringField()
+    # 词条的类型
+    # 1.百度热搜
+    # 2.个人search
+    src_type = IntField()
+    # 当前的词汇
+    word = StringField()
+    # 词汇类型
+    # 1:表示新
+    word_type = IntField()
+    # 创建时间
+    created = DateTimeField(default=datetime.now)
