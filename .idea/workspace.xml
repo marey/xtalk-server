@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f72b8e6e-2635-4fcc-9109-4d975610e2b1" name="Default" comment="主要是追加百度热搜词的爬虫处理">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web server.doc" afterPath="$PROJECT_DIR$/web server.doc" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rest-web/handler.py" afterPath="$PROJECT_DIR$/rest-web/handler.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rest-web/model.py" afterPath="$PROJECT_DIR$/rest-web/model.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/python env" afterPath="$PROJECT_DIR$/python env" />
+    <list default="true" id="f72b8e6e-2635-4fcc-9109-4d975610e2b1" name="Default" comment="接口都有了，但是待测试">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rest-web/server.py" afterPath="$PROJECT_DIR$/rest-web/server.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -42,7 +38,7 @@
         <entry file="file://$PROJECT_DIR$/rest-web/model.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="109" column="11" selection-start-line="109" selection-start-column="4" selection-end-line="109" selection-end-column="11" />
+              <caret line="110" column="11" selection-start-line="110" selection-start-column="4" selection-end-line="110" selection-end-column="11" />
               <folding>
                 <element signature="e#38#67#0" expanded="true" />
               </folding>
@@ -53,8 +49,8 @@
       <file leaf-file-name="server.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rest-web/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.21626016">
-              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.58699185">
+              <caret line="19" column="12" selection-start-line="19" selection-start-column="12" selection-end-line="19" selection-end-column="12" />
               <folding>
                 <element signature="e#37#58#0" expanded="true" />
               </folding>
@@ -66,7 +62,7 @@
         <entry file="file://$PROJECT_DIR$/rest-web/handler.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-46.81818">
-              <caret line="676" column="25" selection-start-line="676" selection-start-column="25" selection-end-line="676" selection-end-column="25" />
+              <caret line="677" column="25" selection-start-line="677" selection-start-column="25" selection-end-line="677" selection-end-column="25" />
               <folding>
                 <element signature="e#38#56#0" expanded="true" />
               </folding>
@@ -974,7 +970,13 @@
       <option name="project" value="LOCAL" />
       <updated>1439730261002</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="接口都有了，但是待测试">
+      <created>1439734131674</created>
+      <option name="number" value="00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1439734131674</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1020,7 +1022,8 @@
     <MESSAGE value="修改了mongo的数组查询机制的表" />
     <MESSAGE value="添加了接口处理" />
     <MESSAGE value="主要是追加百度热搜词的爬虫处理" />
-    <option name="LAST_COMMIT_MESSAGE" value="主要是追加百度热搜词的爬虫处理" />
+    <MESSAGE value="接口都有了，但是待测试" />
+    <option name="LAST_COMMIT_MESSAGE" value="接口都有了，但是待测试" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1273,7 +1276,7 @@
     <entry file="file://$PROJECT_DIR$/rest-web/model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="109" column="11" selection-start-line="109" selection-start-column="4" selection-end-line="109" selection-end-column="11" />
+          <caret line="110" column="11" selection-start-line="110" selection-start-column="4" selection-end-line="110" selection-end-column="11" />
           <folding>
             <element signature="e#38#67#0" expanded="true" />
           </folding>
@@ -1283,7 +1286,7 @@
     <entry file="file://$PROJECT_DIR$/rest-web/handler.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-46.81818">
-          <caret line="676" column="25" selection-start-line="676" selection-start-column="25" selection-end-line="676" selection-end-column="25" />
+          <caret line="677" column="25" selection-start-line="677" selection-start-column="25" selection-end-line="677" selection-end-column="25" />
           <folding>
             <element signature="e#38#56#0" expanded="true" />
           </folding>
@@ -1292,8 +1295,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rest-web/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.21626016">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.58699185">
+          <caret line="19" column="12" selection-start-line="19" selection-start-column="12" selection-end-line="19" selection-end-column="12" />
           <folding>
             <element signature="e#37#58#0" expanded="true" />
           </folding>
