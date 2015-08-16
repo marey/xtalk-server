@@ -1,3 +1,11 @@
 sudo apt-get install python-dev
+sudo apt-get install build-essential python-dev libxml2-dev libxslt1-dev
+sudo apt-get build-dep python-lxml
 pip install scrapy
+pip install twisted
+pip install lxml
+pip install w3lib
+pip install cssselect
+pip install pyOpenSSL
+pip install beautifulsoup4
 pip install pymongo mongoengine
