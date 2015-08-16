@@ -64,6 +64,8 @@ class User(Document):
     user_telephone = StringField()
     # 用户状态
     user_status = IntField()
+    # 用户的聊天室 tag
+    user_words = ListField(ReferenceField(Words))
     # 用户自定义频道
     channels = ListField(ReferenceField(UserChannel))
     # 用户的黑名单列表
@@ -94,5 +96,20 @@ class Words(Document):
     # 词汇类型
     # 1:表示新
     word_type = IntField()
+    # 该词汇里面的聊天的人数
+    user_count = IntField()
     # 创建时间
     created = DateTimeField(default=datetime.now)
+
+
+# 保存举报用户的记录
+class ReportUser(Document):
+    report_user_id = StringField()
+    # 黑名单的地址
+    user_id = StringField()
+    # 举报的文本
+    text = StringField()
+    # 举报时间
+    created = DateTimeField(default=datetime.now)
+
+

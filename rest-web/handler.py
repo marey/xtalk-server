@@ -13,6 +13,8 @@ from rong import *
 class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
         connect('project1', host='mongodb://182.92.78.106:27017/test')
+        self._response = {"code": "200", "message": "", "result": ""}
+        self._result = None
 
     def check_params_exists(self, key):
         """
@@ -24,6 +26,12 @@ class BaseHandler(tornado.web.RequestHandler):
         if value is None:
             raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, key)
 
+    def on_write(self):
+        if self._result is not None:
+            self._response["result"] = self._result
+
+        self.write(json.dumps(self._response))
+
 
 # 用户登录处理
 class UserHandler(BaseHandler):
@@ -34,27 +42,15 @@ class UserHandler(BaseHandler):
             用户信息的获取
         :return:
         """
-        code = "200"
-        message = ""
-        result = ""
-
         try:
             # 检查参数的传入
             self.check_get_params()
-            result = self.get_user_info()
-
+            self._result = self.get_user_info()
         except tornado.web.HTTPError, e:
-            code = e.status_code
-            message = e.log_message.format(e.args)
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
 
-        # 将数据整理后返回
-        response = {}
-
-        response["code"] = code
-        response["message"] = message
-        response["result"] = result
-
-        self.write(json.dumps(response))
+        self.on_write()
         self.finish()
 
     @tornado.web.asynchronous
@@ -65,28 +61,18 @@ class UserHandler(BaseHandler):
             实际上是做user的login操作
         :return: 处理后的json的数组
         """
-        code = "200"
-        message = ""
-        result = ""
 
         try:
             # 检查参数的传入
             self.check_post_params()
             # 获取登陆用户的信息
-            result = self.get_login_user()
+            self._result = self.get_login_user()
 
         except tornado.web.HTTPError, e:
-            code = e.status_code
-            message = e.log_message.format(e.args)
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
 
-        # 将数据整理后
-        response = {}
-
-        response["code"] = code
-        response["message"] = message
-        response["result"] = result
-
-        self.write(json.dumps(response))
+        self.on_write()
         self.finish()
 
     @tornado.web.asynchronous
@@ -96,28 +82,19 @@ class UserHandler(BaseHandler):
             编辑user的内容，编辑用户的信息
         :return: 返回处理后的json字符串
         """
-        code = "200"
-        message = ""
-        result = ""
 
         try:
             # 检查参数的传入
-            self.check_put_params()
+            # 判断参数是否存在
+            self.check_params_exists("user_id")
             # 获取登陆用户的信息
             self.edit_user_info()
 
         except tornado.web.HTTPError, e:
-            code = e.status_code
-            message = e.log_message.format(e.args)
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
 
-        # 将数据整理后
-        response = {}
-
-        response["code"] = code
-        response["message"] = message
-        response["result"] = result
-
-        self.write(json.dumps(response))
+        self.on_write()
         self.finish()
 
     def edit_user_info(self):
@@ -133,10 +110,6 @@ class UserHandler(BaseHandler):
                                             set__user_photo_url=user_photo_url, set__user_region=user_region,
                                             set__user_sign=user_sign, set__user_telephone=user_telephone)
 
-    def check_put_params(self):
-        # 判断参数是否存在
-        self.check_params_exists("user_id")
-
     def check_get_params(self):
         # 判断参数是否存在
         self.check_params_exists("user_id")
@@ -144,7 +117,7 @@ class UserHandler(BaseHandler):
     def get_user_info(self):
         user_id = self.get_argument("user_id", default=None)
         user = User.objects(id=user_id).only("user_name", "user_photo_url", "user_sex", "user_region", "user_sign",
-                                             "user_telephone").first()
+                                             "user_telephone,user_words").first()
         # post = Post.objects.no_dereference().first()
         if user is not None:
             reslut = {}
@@ -154,6 +127,13 @@ class UserHandler(BaseHandler):
             reslut["region"] = user.user_region
             reslut["signature"] = user.user_sign
             reslut["phone"] = user.user_telephone
+            user_words = user.user_words
+            if user_words is not None:
+                word_list = []
+                for word in user_words[:6]:
+                    word_list.append(word.word)
+
+                reslut["user_words"] = word_list
 
             return reslut
 
@@ -308,7 +288,220 @@ class UserChannelHandler(BaseHandler):
 
         return result
 
+
 # 用户登录处理
+class UserSearchHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        """
+            实时查询，匹配用户的查询词
+        :return:
+        """
+        code = "200"
+        message = ""
+        result = ""
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            # 检查参数的传入
+            self.check_params_exists("word")
+            result = self.get_word_search()
+
+        except tornado.web.HTTPError, e:
+            code = e.status_code
+            message = e.log_message.format(e.args)
+
+        # 将数据整理后返回
+        response = {}
+
+        response["code"] = code
+        response["message"] = message
+        response["result"] = result
+
+        self.write(json.dumps(response))
+        self.finish()
+
+    def get_word_search(self):
+        p_word = self.get_argument("word")
+        words = Words.objects(word__icontains=p_word).order_by('-created')[:5]
+        map_list = []
+        if words is not None:
+
+            for word in words:
+                map_list.append(word.word)
+
+        if len(map_list) > 0:
+            return map_list
+        else:
+            return ""
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def post(self):
+        """
+            用户提交检索的词以后，保存数据
+        :return:
+        """
+        code = "200"
+        message = ""
+        result = ""
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            # 检查参数的传入
+            self.check_params_exists("word")
+            result = self.get_word_search()
+            # 保存需要查询的词
+            self.save_search_word()
+
+        except tornado.web.HTTPError, e:
+            code = e.status_code
+            message = e.log_message.format(e.args)
+
+        # 将数据整理后返回
+        response = {}
+
+        response["code"] = code
+        response["message"] = message
+        response["result"] = result
+
+        self.write(json.dumps(response))
+        self.finish()
+
+    def save_search_word(self):
+        user_id = self.get_argument("word")
+        p_word = self.get_argument("word")
+        md5obj = hashlib.md5()
+        md5obj.update(p_word)
+        word_id = md5obj.hexdigest()
+        word = Words.objects(word_id=word_id).first()
+        if word is None:
+            word = Words()
+            word.word_id = word_id
+            word.word = p_word
+            word.src_type = 2
+            word.word_type = None
+            word.user_count = 1
+            word.created = datetime.now
+            word.save()
+        else:
+            word.update(inc__user_count=1)
+
+        User.objects(id=user_id).update_one(push__user_words=word)
+
+
+class WordsHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        """
+            获取首页卡片的词汇内容
+        :return:
+        """
+        code = "200"
+        message = ""
+        result = ""
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("type")
+            result = self.get_black_users()
+
+        except tornado.web.HTTPError, e:
+            code = e.status_code
+            message = e.log_message.format(e.args)
+
+        # 将数据整理后返回
+        response = {}
+
+        response["code"] = code
+        response["message"] = message
+        response["result"] = result
+
+        self.write(json.dumps(response))
+        self.finish()
+
+    def get_words(self):
+        user_id = self.get_argument("user_id")
+        type = int(self.get_argument("type"))
+
+        result = []
+        if type == 0:
+            # 0 表示获取所有的聊天的词汇
+            words = self.get_baidu_words()
+            if words is None:
+                result.append(words)
+            # 0 大家都在聊
+            words = self.get_top_count_words()
+            if words is None:
+                result.append(words)
+
+        elif type == 1:
+            # 0 表示获取所有的聊天的词汇
+            words = self.get_baidu_words()
+            if words is None:
+                result.append(words)
+        elif type == 2:
+            # 0 大家都在聊
+            words = self.get_top_count_words()
+            if words is None:
+                result.append(words)
+
+        if len(result) == 0:
+            return ""
+        else:
+            return result
+
+    def get_baidu_words(self):
+        index = self.get_argument("index", default=0)
+        words = Words.objects(src_type=2).order_by("+created")[index:index + 30]
+        if words is None:
+            return None
+
+        result = {"type": 1, "type_name": "热点词汇"}
+        words = []
+
+        for word in words:
+            word_map = {}
+            if word.word_type == 1:
+                word_map["type"] = "新"
+
+            word_map["word"] = word.word
+
+            words.append(word_map)
+
+        result["words"] = words
+
+        return result
+
+    def get_top_count_words(self):
+        index = self.get_argument("index", default=0)
+        words = Words.objects().order_by("-user_count")[index:index + 30]
+        if words is None:
+            return None
+
+        result = {"type": 2, "type_name": "大家都在聊"}
+        words = []
+
+        for word in words:
+            word_map = {}
+            if word.word_type == 1:
+                word_map["type"] = "新"
+
+            word_map["word"] = word.word
+
+            words.append(word_map)
+
+        result["words"] = words
+
+        return result
+
+
+# 用户的黑名单数据
 class UserBlackHandler(BaseHandler):
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -432,3 +625,38 @@ class UserBlackHandler(BaseHandler):
         black_user_id = self.get_argument("black_user_id")
         black_user = BlackUser(user_id=black_user_id)
         User.objects(id=user_id).update_one(pull__black_users=black_user)
+
+
+class UserReportHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def post(self):
+
+        """
+            保存举报的用户信息
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("report_user_id")
+            self.check_params_exists("text")
+            # 保存举报用户的信息
+            self.save_report_user()
+
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def save_report_user(self):
+        report_user = ReportUser()
+        report_user.report_user_id = self.get_argument("report_user_id")
+        report_user.user_id = self.get_argument("user_id")
+        report_user.text = self.get_argument("text")
+
+        report_user.save()

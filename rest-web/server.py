@@ -36,6 +36,9 @@ application = tornado.web.Application([
     (r"/user", UserHandler),
     (r"/user/black", UserBlackHandler),
     (r"/user/channel", UserChannelHandler),
+    (r"/words", WordsHandler),
+    (r"/user/search", UserSearchHandler),
+    (r"/user/report", UserReportHandler),
     (r"/test", TestHandler),
 
     (r"/user/upload_photo", UserUploadPhotoHandler),
