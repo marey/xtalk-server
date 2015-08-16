@@ -101,6 +101,18 @@ class State(Document):
     content = StringField()
 
 
+class OsVersion(Document):
+    """
+        客户端版本
+    """
+    # 客户端类型
+    os_type = IntField()
+    # 版本号
+    version = StringField()
+    # 创建时间
+    created = DateTimeField(default=datetime.now)
+
+
 # 保存举报用户的记录
 class ReportUser(Document):
     report_user_id = StringField()

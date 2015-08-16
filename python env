@@ -1,11 +1,16 @@
 sudo apt-get install python-dev
 sudo apt-get install build-essential python-dev libxml2-dev libxslt1-dev
 sudo apt-get build-dep python-lxml
+sudo apt-get install libffi-dev
+sudo apt-get install libssl-dev
 pip install scrapy
 pip install twisted
 pip install lxml
 pip install w3lib
 pip install cssselect
-pip install pyOpenSSL
+pip install pyOpenSSL cryptography
 pip install beautifulsoup4
 pip install pymongo mongoengine
+
+
+* */1 * * * scrapy runspider /project/xtalk-server/rest-web/baidu_spider.py

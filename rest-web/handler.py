@@ -660,3 +660,34 @@ class UserReportHandler(BaseHandler):
         report_user.text = self.get_argument("text")
 
         report_user.save()
+
+
+class OsVersionHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+
+        """
+            获取客户端的版本信息
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("os_type")
+            # 获取当前的客户端的版本
+            self.get_os_version()
+
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def get_os_version(self):
+        os_type = int(self.get_argument("os_type"))
+        version = OsVersion.objects(os_type=os_type).order_by("+created").first()
+        if version is not None:
+            self._result = {"version": version.version}
