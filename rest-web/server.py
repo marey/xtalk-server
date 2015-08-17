@@ -9,6 +9,7 @@ from handler import *
 application = tornado.web.Application([
     # (r"/", MainHandler),
     (r"/user", UserHandler),
+    (r"/user/login", UserLoginHandler),
     (r"/user/black", UserBlackHandler),
     # (r"/user/channel", UserChannelHandler),
     (r"/words", WordsHandler),

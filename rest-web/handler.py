@@ -33,6 +33,75 @@ class BaseHandler(tornado.web.RequestHandler):
         self.write(json.dumps(self._response))
 
 
+class UserLoginHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def post(self):
+
+        """
+            实际上是做user的login操作
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("type")
+            self.check_params_exists("id")
+            self.check_params_exists("pwd")
+            # 获取登陆用户的信息
+            self.login_user()
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def login_user(self):
+        type = int(self.get_argument("type"))
+        id = self.get_argument("id")
+        if type == 2:
+            user_pwd = utils.md5(self.get_argument("pwd", default=None))
+            user = User.objects(authen_type=type, login_id=id, user_pwd=user_pwd).first()
+            if user is None:
+                raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003)
+
+            self._result = {"user_id": user.id}
+
+class UserChangePwdHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def post(self):
+
+        """
+            实际上是做user的login操作
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("pwd")
+            # 获取登陆用户的信息
+            self.change_user_pwd()
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def change_user_pwd(self):
+        user_id = self.get_argument("user_id")
+        user = User.objects(id=user_id).first()
+        if user is None:
+            raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003,user_id)
+        else:
+            user.user_pwd = utils.md5(self.get_argument("pwd"))
+            user.save()
+
 # 用户登录处理
 class UserHandler(BaseHandler):
     @tornado.web.asynchronous
@@ -457,8 +526,11 @@ class WordsHandler(BaseHandler):
             return result
 
     def get_baidu_words(self):
-        index = self.get_argument("index", default=0)
-        words = Words.objects(src_type=2).order_by("+created")[index:index + 30]
+        index = self.get_argument("page_index", default=0)
+        words = Words.objects(src_type=2).order_by("+created")[index*30:(index + 1)*30]
+        if words is None:
+            words = Words.objects(src_type=2).order_by("+created")[0:30]
+
         if words is None:
             return None
 
@@ -479,8 +551,11 @@ class WordsHandler(BaseHandler):
         return result
 
     def get_top_count_words(self):
-        index = self.get_argument("index", default=0)
-        words = Words.objects().order_by("-user_count")[index:index + 30]
+        index = self.get_argument("page_index", default=0)
+        words = Words.objects().order_by("-user_count")[index*30:(index + 1)*30]
+        if words is None:
+            words = Words.objects().order_by("-user_count")[0:30]
+
         if words is None:
             return None
 
