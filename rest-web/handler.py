@@ -69,13 +69,15 @@ class UserLoginHandler(BaseHandler):
 
             self._result = {"user_id": user.id}
 
+
+# 用户修改密码
 class UserChangePwdHandler(BaseHandler):
     @tornado.web.asynchronous
     @tornado.gen.coroutine
     def post(self):
 
         """
-            实际上是做user的login操作
+            用户修改密码
         :return: 处理后的json的数组
         """
 
