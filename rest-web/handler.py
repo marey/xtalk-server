@@ -40,7 +40,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def on_write(self):
         if self._result is not None:
             self._response["result"] = self._result
-
+        # self.set_header("Content-Type", "application/json")
         self.write(json.dumps(self._response))
 
 
@@ -150,7 +150,7 @@ class UserHandler(BaseHandler):
             # 检查参数的传入
             self.check_post_params()
             # 获取登陆用户的信息
-            self._result = self.get_login_user()
+            self._result = self.register_user()
 
         except tornado.web.HTTPError, e:
             self._response["code"] = e.status_code
@@ -223,7 +223,7 @@ class UserHandler(BaseHandler):
 
         return ""
 
-    def get_login_user(self):
+    def register_user(self):
 
         # 0,表示微信，1，表示微博，2，表示手机号
         type = int(self.get_argument("type", default=None))
@@ -235,9 +235,13 @@ class UserHandler(BaseHandler):
             user = User.objects(authen_type=type,
                                 login_id=login_id,
                                 user_pwd=pwd).first()
+
+            if user is not None:
+                raise tornado.web.HTTPError("ERROR_0006", MessageUtils.ERROR_0006, login_id)
         else:
-            user = User.objects(authen_type=type,
-                                login_id=login_id).first()
+            # user = User.objects(authen_type=type,login_id=login_id).first()
+
+            raise tornado.web.HTTPError("ERROR_0002", MessageUtils.ERROR_0002, "type")
 
         if user is None:
             # 将数据保存到数据库中
@@ -282,8 +286,15 @@ class UserHandler(BaseHandler):
 
         pwd = self.get_argument("pwd", default=None)
 
-        if cmp(type, "2") == 0 and pwd is None:
-            raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "pwd")
+        if cmp(type, "2") == 0:
+            if pwd is None:
+                raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "pwd")
+            elif len(pwd) < 6:
+                raise tornado.web.HTTPError("ERROR_0008", MessageUtils.ERROR_0008)
+
+            phone_number = utils.check_mobile_phone(id)
+            if phone_number is None:
+                raise tornado.web.HTTPError("ERROR_0007", MessageUtils.ERROR_0007)
 
         name = self.get_argument("name", default=None)
         if type in ["0", "1"] and name is None:
