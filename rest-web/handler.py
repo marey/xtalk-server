@@ -3,6 +3,7 @@
 __author__ = 'murui'
 
 import tornado.web
+from bson.objectid import ObjectId
 
 from message import MessageUtils
 from model import *
@@ -25,6 +26,16 @@ class BaseHandler(tornado.web.RequestHandler):
         # 判断是否为空
         if value is None:
             raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, key)
+        if cmp("user_id", key) == 0:
+            self.check_user_id(key)
+
+    # 验证有效性
+    def check_user_id(self, user_id):
+        try:
+            value = ObjectId(user_id)
+            # 判断是否为空
+        except:
+            raise tornado.web.HTTPError("ERROR_0005", MessageUtils.ERROR_0005, user_id)
 
     def on_write(self):
         if self._result is not None:
@@ -97,12 +108,14 @@ class UserChangePwdHandler(BaseHandler):
 
     def change_user_pwd(self):
         user_id = self.get_argument("user_id")
+
         user = User.objects(id=user_id).first()
         if user is None:
-            raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003,user_id)
+            raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003, user_id)
         else:
             user.user_pwd = utils.md5(self.get_argument("pwd"))
             user.save()
+
 
 # 用户登录处理
 class UserHandler(BaseHandler):
@@ -529,7 +542,7 @@ class WordsHandler(BaseHandler):
 
     def get_baidu_words(self):
         index = self.get_argument("page_index", default=0)
-        words = Words.objects(src_type=2).order_by("+created")[index*30:(index + 1)*30]
+        words = Words.objects(src_type=2).order_by("+created")[index * 30:(index + 1) * 30]
         if words is None:
             words = Words.objects(src_type=2).order_by("+created")[0:30]
 
@@ -554,7 +567,7 @@ class WordsHandler(BaseHandler):
 
     def get_top_count_words(self):
         index = self.get_argument("page_index", default=0)
-        words = Words.objects().order_by("-user_count")[index*30:(index + 1)*30]
+        words = Words.objects().order_by("-user_count")[index * 30:(index + 1) * 30]
         if words is None:
             words = Words.objects().order_by("-user_count")[0:30]
 
