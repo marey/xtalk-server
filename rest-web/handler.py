@@ -26,8 +26,8 @@ class BaseHandler(tornado.web.RequestHandler):
         # 判断是否为空
         if value is None:
             raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, key)
-        if cmp("user_id", key) == 0:
-            self.check_user_id(key)
+            # if cmp("user_id", key) == 0:
+            # self.check_user_id(key)
 
     # 验证有效性
     def check_user_id(self, user_id):
@@ -91,7 +91,6 @@ class UserChangePwdHandler(BaseHandler):
             用户修改密码
         :return: 处理后的json的数组
         """
-
         try:
             # 检查参数的传入
             self.check_params_exists("user_id")
@@ -420,10 +419,11 @@ class UserSearchHandler(BaseHandler):
 
     def get_word_search(self):
         p_word = self.get_argument("word")
+        # p_word = p_word.encode("utf8")
         words = Words.objects(word__icontains=p_word).order_by('-created')[:5]
         map_list = []
         if words is not None:
-
+            # print len(words)
             for word in words:
                 map_list.append(word.word)
 
@@ -467,11 +467,9 @@ class UserSearchHandler(BaseHandler):
         self.finish()
 
     def save_search_word(self):
-        user_id = self.get_argument("word")
+        user_id = self.get_argument("user_id")
         p_word = self.get_argument("word")
-        md5obj = hashlib.md5()
-        md5obj.update(p_word)
-        word_id = md5obj.hexdigest()
+        word_id = utils.md5(p_word)
         word = Words.objects(word_id=word_id).first()
         if word is None:
             word = Words()
@@ -480,12 +478,15 @@ class UserSearchHandler(BaseHandler):
             word.src_type = 2
             word.word_type = None
             word.user_count = 1
-            word.created = datetime.now
+
             word.save()
         else:
             word.update(inc__user_count=1)
 
-        User.objects(id=user_id).update_one(push__user_words=word)
+        user_word = UserWords()
+        user_word.word_id = word.id
+
+        User.objects(id=user_id).update_one(push__user_words=user_word)
 
 
 class WordsHandler(BaseHandler):

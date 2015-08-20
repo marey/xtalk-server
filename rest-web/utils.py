@@ -6,7 +6,7 @@ import re
 def md5(key):
     import hashlib
     m = hashlib.md5()
-    m.update(key)
+    m.update(key.encode("utf8"))
     return m.hexdigest()
 
 def check_mobile_phone(phone_number):

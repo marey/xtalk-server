@@ -56,6 +56,11 @@ class BlackUser(EmbeddedDocument):
     # 拖黑时间
     created = DateTimeField(default=datetime.now)
 
+class UserWords(EmbeddedDocument):
+    # Word的主键
+    word_id = ObjectIdField()
+     # 创建Word的时间
+    created = DateTimeField(default=datetime.now)
 
 # 用户文档
 class User(Document):
@@ -82,7 +87,7 @@ class User(Document):
     # 用户状态
     user_status = IntField()
     # 用户的聊天室 tag
-    user_words = ListField(ReferenceField(Words))
+    user_words = ListField(EmbeddedDocumentField(UserWords))
     # 用户自定义频道
     channels = ListField(ReferenceField(UserChannel))
     # 用户的黑名单列表

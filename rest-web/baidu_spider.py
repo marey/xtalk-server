@@ -12,7 +12,7 @@ class BaiDuSpider(scrapy.Spider):
     name = "x_talk"
     start_urls = ['http://top.baidu.com/buzz?b=1']
     # 连接mongo
-    connect('project1', host='mongodb://127.0.0.1:27017/test')
+    connect('project1', host='mongodb://182.92.78.106:27017/test')
 
     def parse(self, response):
         # soup = BeautifulSoup(response.body, 'html.parser')
@@ -34,7 +34,5 @@ class BaiDuSpider(scrapy.Spider):
                 word.word_type = 1
             else:
                 word.word_type = None
-
-            word.created = datetime.now
 
             word.save()
