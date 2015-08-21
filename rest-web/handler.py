@@ -10,7 +10,6 @@ from model import *
 import utils
 from rong import *
 
-
 class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
         connect('project1', host='mongodb://182.92.78.106:27017/test')
@@ -78,7 +77,8 @@ class UserLoginHandler(BaseHandler):
             if user is None:
                 raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003)
 
-            self._result = {"user_id": str(user.id)}
+            self._result = {"user_id": str(user.id), "name": user.user_name, "photo": user.user_photo_url, "sign":
+                user.user_sign}
 
 
 # 用户修改密码
@@ -519,22 +519,22 @@ class WordsHandler(BaseHandler):
         if type == 0:
             # 0 表示获取所有的聊天的词汇
             words = self.get_baidu_words()
-            if words is None:
+            if words is not None:
                 result.append(words)
             # 1 大家都在聊
             words = self.get_top_count_words()
-            if words is None:
+            if words is not None:
                 result.append(words)
 
         elif type == 1:
             # 0 表示获取所有的聊天的词汇
             words = self.get_baidu_words()
-            if words is None:
+            if words is not None:
                 result.append(words)
         elif type == 2:
             # 0 大家都在聊
             words = self.get_top_count_words()
-            if words is None:
+            if words is not None:
                 result.append(words)
 
         if len(result) > 0:
@@ -543,14 +543,14 @@ class WordsHandler(BaseHandler):
     def get_baidu_words(self):
         index = self.get_argument("page_index", default=0)
         words = Words.objects(src_type=1).order_by("+created")[index * 30:(index + 1) * 30]
-        if words is None:
+        if len(words) == 0:
             words = Words.objects(src_type=1).order_by("+created")[0:30]
 
-        if words is None:
+        if len(words) == 0:
             return None
 
         result = {"type": 1, "type_name": "热点词汇"}
-        words = []
+        word_list = []
 
         for word in words:
             word_map = {}
@@ -559,23 +559,23 @@ class WordsHandler(BaseHandler):
 
             word_map["word"] = word.word
 
-            words.append(word_map)
+            word_list.append(word_map)
 
-        result["words"] = words
+        result["words"] = word_list
 
         return result
 
     def get_top_count_words(self):
         index = self.get_argument("page_index", default=0)
         words = Words.objects().order_by("-user_count")[index * 30:(index + 1) * 30]
-        if words is None:
+        if len(words) == 0:
             words = Words.objects().order_by("-user_count")[0:30]
 
-        if words is None:
+        if len(words) == 0:
             return None
 
         result = {"type": 2, "type_name": "大家都在聊"}
-        words = []
+        word_list = []
 
         for word in words:
             word_map = {}
@@ -584,9 +584,9 @@ class WordsHandler(BaseHandler):
 
             word_map["word"] = word.word
 
-            words.append(word_map)
+            word_list.append(word_map)
 
-        result["words"] = words
+        result["words"] = word_list
 
         return result
 

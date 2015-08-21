@@ -1,11 +1,11 @@
 # coding=utf-8
 __author__ = 'murui'
+import hashlib
+
 import scrapy
 from bs4 import BeautifulSoup
+
 from model import *
-import hashlib
-from bson.objectid import ObjectId
-from datetime import datetime
 
 
 class BaiDuSpider(scrapy.Spider):
