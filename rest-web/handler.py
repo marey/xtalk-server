@@ -72,7 +72,8 @@ class UserLoginHandler(BaseHandler):
         type = int(self.get_argument("type"))
         id = self.get_argument("id")
         if type == 2:
-            user_pwd = utils.md5(self.get_argument("pwd", default=None))
+            # user_pwd = utils.md5(self.get_argument("pwd", default=None))
+            user_pwd = self.get_argument("pwd")
             user = User.objects(authen_type=type, login_id=id, user_pwd=user_pwd).first()
             if user is None:
                 raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003)
@@ -112,7 +113,8 @@ class UserChangePwdHandler(BaseHandler):
         if user is None:
             raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003, user_id)
         else:
-            user.user_pwd = utils.md5(self.get_argument("pwd"))
+            # user.user_pwd = utils.md5(self.get_argument("pwd"))
+            user.user_pwd = self.get_argument("pwd")
             user.save()
 
 
@@ -230,7 +232,8 @@ class UserHandler(BaseHandler):
 
         user = None
         if type == 2:
-            pwd = utils.md5(self.get_argument("pwd", default=None))
+            # pwd = utils.md5(self.get_argument("pwd", default=None))
+            pwd = self.get_argument("pwd")
             user = User.objects(authen_type=type,
                                 login_id=login_id,
                                 user_pwd=pwd).first()
@@ -248,7 +251,8 @@ class UserHandler(BaseHandler):
             user.authen_type = type
             user.login_id = login_id
             user.user_name = self.get_argument("name", default=None)
-            user.user_pwd = utils.md5(self.get_argument("pwd", default=None))
+            # user.user_pwd = utils.md5(self.get_argument("pwd", default=None))
+            user.user_pwd = self.get_argument("pwd")
             user.user_photo_url = self.get_argument("photo", default=None)
             user.user_sex = self.get_argument("sex", default=None)
             user.user_region = self.get_argument("region", default=None)
