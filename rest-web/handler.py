@@ -78,7 +78,7 @@ class UserLoginHandler(BaseHandler):
             if user is None:
                 raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003)
 
-            self._result = {"user_id": user.id}
+            self._result = {"user_id": str(user.id)}
 
 
 # 用户修改密码
@@ -497,28 +497,18 @@ class WordsHandler(BaseHandler):
             获取首页卡片的词汇内容
         :return:
         """
-        code = "200"
-        message = ""
-        result = ""
 
         try:
             # 检查参数的传入
             self.check_params_exists("user_id")
             self.check_params_exists("type")
-            result = self.get_black_users()
+            result = self.get_words()
 
         except tornado.web.HTTPError, e:
-            code = e.status_code
-            message = e.log_message.format(e.args)
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
 
-        # 将数据整理后返回
-        response = {}
-
-        response["code"] = code
-        response["message"] = message
-        response["result"] = result
-
-        self.write(json.dumps(response))
+        self.on_write()
         self.finish()
 
     def get_words(self):
@@ -531,7 +521,7 @@ class WordsHandler(BaseHandler):
             words = self.get_baidu_words()
             if words is None:
                 result.append(words)
-            # 0 大家都在聊
+            # 1 大家都在聊
             words = self.get_top_count_words()
             if words is None:
                 result.append(words)
@@ -547,16 +537,14 @@ class WordsHandler(BaseHandler):
             if words is None:
                 result.append(words)
 
-        if len(result) == 0:
-            return ""
-        else:
-            return result
+        if len(result) > 0:
+            self._result = result
 
     def get_baidu_words(self):
         index = self.get_argument("page_index", default=0)
-        words = Words.objects(src_type=2).order_by("+created")[index * 30:(index + 1) * 30]
+        words = Words.objects(src_type=1).order_by("+created")[index * 30:(index + 1) * 30]
         if words is None:
-            words = Words.objects(src_type=2).order_by("+created")[0:30]
+            words = Words.objects(src_type=1).order_by("+created")[0:30]
 
         if words is None:
             return None
