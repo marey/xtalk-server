@@ -86,13 +86,13 @@ class UserLoginHandler(BaseHandler):
             reslut["region"] = user.user_region
             reslut["signature"] = user.user_sign
             reslut["phone"] = user.user_telephone
-            user_words = user.user_words
-            if user_words is not None:
-                word_list = []
-                for word in user_words[:6]:
-                    word_list.append(word.word)
-
-                reslut["user_words"] = word_list
+            # user_words = user.user_words
+            # if user_words is not None:
+            #     word_list = []
+            #     for word in user_words[:6]:
+            #         word_list.append(word.word)
+            #
+            #     reslut["user_words"] = word_list
 
             self._result = reslut
 
