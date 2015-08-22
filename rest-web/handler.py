@@ -40,7 +40,7 @@ class BaseHandler(tornado.web.RequestHandler):
         if self._result is not None:
             self._response["result"] = self._result
         # self.set_header("Content-Type", "application/json")
-        self.write(json.dumps(self._response))
+        self.write(self._response)
 
 
 class UserLoginHandler(BaseHandler):
@@ -300,11 +300,11 @@ class UserHandler(BaseHandler):
                 raise tornado.web.HTTPError("ERROR_0007", MessageUtils.ERROR_0007)
 
         name = self.get_argument("name", default=None)
-        if type in ["0", "1"] and name is None:
+        if name is None:
             raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "name")
 
         photo = self.get_argument("photo", default=None)
-        if type in ["0", "1"] and photo is None:
+        if photo is None:
             raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "photo")
 
 
