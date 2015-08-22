@@ -109,7 +109,7 @@ class UserChangePwdHandler(BaseHandler):
         """
         try:
             # 检查参数的传入
-            self.check_params_exists("user_id")
+            self.check_params_exists("phone")
             self.check_params_exists("pwd")
             # 获取登陆用户的信息
             self.change_user_pwd()
@@ -122,11 +122,11 @@ class UserChangePwdHandler(BaseHandler):
         self.finish()
 
     def change_user_pwd(self):
-        user_id = self.get_argument("user_id")
+        phone = self.get_argument("phone")
 
-        user = User.objects(id=user_id).first()
+        user = User.objects(authen_type=2,login_id= phone).first()
         if user is None:
-            raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003, user_id)
+            raise tornado.web.HTTPError("ERROR_0009", MessageUtils.ERROR_0009, phone)
         else:
             # user.user_pwd = utils.md5(self.get_argument("pwd"))
             user.user_pwd = self.get_argument("pwd")

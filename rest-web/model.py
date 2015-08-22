@@ -73,7 +73,7 @@ class User(Document):
     # 用户密码
     user_pwd = StringField()
     # 用户头像地址
-    user_photo_url = StringField()
+    user_photo_url = URLField()
     # 用户性别
     user_sex = StringField()
     # 用户生日
