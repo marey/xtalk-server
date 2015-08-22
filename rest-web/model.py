@@ -75,7 +75,7 @@ class User(Document):
     # 用户头像地址
     user_photo_url = URLField()
     # 用户性别
-    user_sex = StringField()
+    user_sex = IntField()
     # 用户生日
     user_birthday = StringField()
     # 用户身份

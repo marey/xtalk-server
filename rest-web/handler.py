@@ -91,10 +91,10 @@ class UserLoginHandler(BaseHandler):
             # user_words = user.user_words
             # if user_words is not None:
             # word_list = []
-            #     for word in user_words[:6]:
-            #         word_list.append(word.word)
+            # for word in user_words[:6]:
+            # word_list.append(word.word)
             #
-            #     reslut["user_words"] = word_list
+            # reslut["user_words"] = word_list
 
             self._result = reslut
 
@@ -188,6 +188,11 @@ class UserHandler(BaseHandler):
             # 检查参数的传入
             # 判断参数是否存在
             self.check_params_exists("user_id")
+            self.check_params_exists("name")
+            self.check_params_exists("photo")
+            self.check_params_exists("region")
+            self.check_params_exists("signature")
+            self.check_params_exists("sex")
             # 获取登陆用户的信息
             self.edit_user_info()
 
@@ -204,12 +209,13 @@ class UserHandler(BaseHandler):
         user_photo_url = self.get_argument("photo")
         user_region = self.get_argument("region")
         user_sign = self.get_argument("signature")
-        user_telephone = self.get_argument("phone")
-        user_sex = self.get_argument("sex")
+        user_sex = self.get_argument("sex", 1)
+        if user_sex in [1, 2]:
+            raise tornado.web.HTTPError("40002", MessageUtils.ERROR_0002, user_sex)
 
         User.objects(id=user_id).update_one(set__user_name=user_name, set__user_sex=user_sex,
                                             set__user_photo_url=user_photo_url, set__user_region=user_region,
-                                            set__user_sign=user_sign, set__user_telephone=user_telephone)
+                                            set__user_sign=user_sign)
 
     def check_get_params(self):
         # 判断参数是否存在
@@ -217,9 +223,8 @@ class UserHandler(BaseHandler):
 
     def get_user_info(self):
         user_id = self.get_argument("user_id", default=None)
-        user = User.objects(id=user_id).only("user_name", "user_photo_url", "user_sex", "user_region", "user_sign",
-                                             "user_telephone,user_words").first()
-        # post = Post.objects.no_dereference().first()
+        user = User.objects(id=user_id).first()
+
         if user is not None:
             reslut = {}
             reslut["name"] = user.user_name
@@ -561,7 +566,7 @@ class WordsHandler(BaseHandler):
             self._result = result
 
     def get_baidu_words(self):
-        index = self.get_argument("page_index", default=0)
+        index = self.get_argument("page_index", 0)
         words = Words.objects(src_type=1).order_by("+created")[index * 30:(index + 1) * 30]
         if len(words) == 0:
             words = Words.objects(src_type=1).order_by("+created")[0:30]
@@ -586,7 +591,7 @@ class WordsHandler(BaseHandler):
         return result
 
     def get_top_count_words(self):
-        index = self.get_argument("page_index", default=0)
+        index = self.get_argument("page_index", 0)
         words = Words.objects().order_by("-user_count")[index * 30:(index + 1) * 30]
         if len(words) == 0:
             words = Words.objects().order_by("-user_count")[0:30]
@@ -735,6 +740,57 @@ class UserBlackHandler(BaseHandler):
         black_user_id = self.get_argument("black_user_id")
         black_user = BlackUser(user_id=black_user_id)
         User.objects(id=user_id).update_one(pull__black_users=black_user)
+
+
+class UserOtherBlackHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def post(self):
+
+        """
+            获取我想要查看的人的黑名单列表
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("other_user_id")
+            # 保存举报用户的信息
+            self.get_other_black()
+
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def get_other_black(self):
+        user_id = self.get_argument("user_id")
+        other_user_id = self.get_argument("other_user_id")
+
+        user = User.objects(id=user_id).first()
+        if user is None:
+            raise tornado.web.HTTPError("40004", MessageUtils.ERROR_0004, user_id)
+
+        other_user = User.objects(id=other_user_id).first()
+        if other_user is None:
+            raise tornado.web.HTTPError("40004", MessageUtils.ERROR_0004, user_id)
+
+        user = User.objects(id=user_id, black_users__user_id=other_user_id).first()
+
+        other_user = User.objects(id=other_user_id, black_users__user_id=user_id).first()
+
+        if user is not None and other_user is not None:
+            self._result = {"type": 3}
+        elif user is not None:
+            self._result = {"type": 1}
+        elif other_user is not None:
+            self._result = {"type": 2}
+        else:
+            self._result = {"type": 0}
 
 
 class UserReportHandler(BaseHandler):

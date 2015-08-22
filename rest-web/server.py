@@ -12,6 +12,7 @@ application = tornado.web.Application([
     (r"/user/login", UserLoginHandler),
     (r"/user/pwd", UserChangePwdHandler),
     (r"/user/black", UserBlackHandler),
+    (r"/user/other/black", UserOtherBlackHandler),
     # (r"/user/channel", UserChannelHandler),
     (r"/words", WordsHandler),
     (r"/user/search", UserSearchHandler),
