@@ -78,8 +78,23 @@ class UserLoginHandler(BaseHandler):
             if user is None:
                 raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003)
 
-            self._result = {"user_id": str(user.id), "name": user.user_name, "photo": user.user_photo_url, "sign":
-                user.user_sign}
+            reslut = {}
+            reslut["user_id"] = str(user.id)
+            reslut["name"] = user.user_name
+            reslut["photo"] = user.user_photo_url
+            reslut["sex"] = user.user_sex
+            reslut["region"] = user.user_region
+            reslut["signature"] = user.user_sign
+            reslut["phone"] = user.user_telephone
+            user_words = user.user_words
+            if user_words is not None:
+                word_list = []
+                for word in user_words[:6]:
+                    word_list.append(word.word)
+
+                reslut["user_words"] = word_list
+
+            self._result = reslut
 
 
 # 用户修改密码
@@ -167,7 +182,6 @@ class UserHandler(BaseHandler):
             编辑user的内容，编辑用户的信息
         :return: 返回处理后的json字符串
         """
-
         try:
             # 检查参数的传入
             # 判断参数是否存在
