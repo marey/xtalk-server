@@ -10,6 +10,7 @@ from model import *
 import utils
 from rong import *
 
+
 class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
         connect('project1', host='mongodb://182.92.78.106:27017/test')
@@ -24,7 +25,7 @@ class BaseHandler(tornado.web.RequestHandler):
         value = self.get_argument(key, default=None)
         # 判断是否为空
         if value is None:
-            raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, key)
+            raise tornado.web.HTTPError("40001", MessageUtils.ERROR_0001, key)
             # if cmp("user_id", key) == 0:
             # self.check_user_id(key)
 
@@ -34,7 +35,7 @@ class BaseHandler(tornado.web.RequestHandler):
             value = ObjectId(user_id)
             # 判断是否为空
         except:
-            raise tornado.web.HTTPError("ERROR_0005", MessageUtils.ERROR_0005, user_id)
+            raise tornado.web.HTTPError("40005", MessageUtils.ERROR_0005, user_id)
 
     def on_write(self):
         if self._result is not None:
@@ -74,10 +75,11 @@ class UserLoginHandler(BaseHandler):
         if type == 2:
             # user_pwd = utils.md5(self.get_argument("pwd", default=None))
             user_pwd = self.get_argument("pwd")
-            user = User.objects(authen_type=type, login_id=id, user_pwd=user_pwd).first()
+            user = User.objects(authen_type=type, login_id=id).first()
             if user is None:
-                raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003)
-
+                raise tornado.web.HTTPError("40010", MessageUtils.ERROR_0010)
+            elif cmp(user_pwd, user.user_pwd) != 0:
+                raise tornado.web.HTTPError("40003", MessageUtils.ERROR_0003)
             reslut = {}
             reslut["user_id"] = str(user.id)
             reslut["name"] = user.user_name
@@ -88,7 +90,7 @@ class UserLoginHandler(BaseHandler):
             reslut["phone"] = user.user_telephone
             # user_words = user.user_words
             # if user_words is not None:
-            #     word_list = []
+            # word_list = []
             #     for word in user_words[:6]:
             #         word_list.append(word.word)
             #
@@ -124,9 +126,9 @@ class UserChangePwdHandler(BaseHandler):
     def change_user_pwd(self):
         phone = self.get_argument("phone")
 
-        user = User.objects(authen_type=2,login_id= phone).first()
+        user = User.objects(authen_type=2, login_id=phone).first()
         if user is None:
-            raise tornado.web.HTTPError("ERROR_0009", MessageUtils.ERROR_0009, phone)
+            raise tornado.web.HTTPError("40009", MessageUtils.ERROR_0009, phone)
         else:
             # user.user_pwd = utils.md5(self.get_argument("pwd"))
             user.user_pwd = self.get_argument("pwd")
@@ -253,11 +255,11 @@ class UserHandler(BaseHandler):
                                 user_pwd=pwd).first()
 
             if user is not None:
-                raise tornado.web.HTTPError("ERROR_0006", MessageUtils.ERROR_0006, login_id)
+                raise tornado.web.HTTPError("40006", MessageUtils.ERROR_0006, login_id)
         else:
             # user = User.objects(authen_type=type,login_id=login_id).first()
 
-            raise tornado.web.HTTPError("ERROR_0002", MessageUtils.ERROR_0002, "type")
+            raise tornado.web.HTTPError("40002", MessageUtils.ERROR_0002, "type")
 
         if user is None:
             # 将数据保存到数据库中
@@ -279,7 +281,7 @@ class UserHandler(BaseHandler):
         if code is not None and code == 200:
             token = response.get("token")
         else:
-            raise tornado.web.HTTPError("ERROR_0003", MessageUtils.ERROR_0003)
+            raise tornado.web.HTTPError("40003", MessageUtils.ERROR_0003)
 
         reslut = {}
         reslut["user_id"] = str(user.pk)
@@ -292,34 +294,34 @@ class UserHandler(BaseHandler):
 
         # 判断是否为空
         if type is None:
-            raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "type")
+            raise tornado.web.HTTPError("40001", MessageUtils.ERROR_0001, "type")
         # 判断是否在可控的范围内
         if type not in ["0", "1", "2"]:
-            raise tornado.web.HTTPError("ERROR_0002", MessageUtils.ERROR_0002, "type")
+            raise tornado.web.HTTPError("40002", MessageUtils.ERROR_0002, "type")
 
         id = self.get_argument("id", default=None)
         if id is None:
-            raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "id")
+            raise tornado.web.HTTPError("40001", MessageUtils.ERROR_0001, "id")
 
         pwd = self.get_argument("pwd", default=None)
 
         if cmp(type, "2") == 0:
             if pwd is None:
-                raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "pwd")
+                raise tornado.web.HTTPError("40001", MessageUtils.ERROR_0001, "pwd")
             elif len(pwd) < 6:
-                raise tornado.web.HTTPError("ERROR_0008", MessageUtils.ERROR_0008)
+                raise tornado.web.HTTPError("40008", MessageUtils.ERROR_0008)
 
             phone_number = utils.check_mobile_phone(id)
             if phone_number is None:
-                raise tornado.web.HTTPError("ERROR_0007", MessageUtils.ERROR_0007)
+                raise tornado.web.HTTPError("40007", MessageUtils.ERROR_0007)
 
         name = self.get_argument("name", default=None)
         if name is None:
-            raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "name")
+            raise tornado.web.HTTPError("40001", MessageUtils.ERROR_0001, "name")
 
         photo = self.get_argument("photo", default=None)
         if photo is None:
-            raise tornado.web.HTTPError("ERROR_0001", MessageUtils.ERROR_0001, "photo")
+            raise tornado.web.HTTPError("40001", MessageUtils.ERROR_0001, "photo")
 
 
 # 用户推荐频道
