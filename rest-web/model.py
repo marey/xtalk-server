@@ -59,6 +59,8 @@ class BlackUser(EmbeddedDocument):
 class UserWords(EmbeddedDocument):
     # Word的主键
     word_id = ObjectIdField()
+    # Word
+    word = StringField()
      # 创建Word的时间
     created = DateTimeField(default=datetime.now)
 
