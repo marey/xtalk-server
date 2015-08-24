@@ -869,7 +869,7 @@ class UserReportHandler(BaseHandler):
             # 检查参数的传入
             self.check_params_exists("user_id")
             self.check_params_exists("report_user_id")
-            self.check_params_exists("text")
+            self.check_params_exists("type")
             # 保存举报用户的信息
             self.save_report_user()
 
@@ -885,7 +885,7 @@ class UserReportHandler(BaseHandler):
         report_user = ReportUser()
         report_user.report_user_id = self.get_argument("report_user_id")
         report_user.user_id = self.get_argument("user_id")
-        report_user.text = self.get_argument("text")
+        report_user.type = int(self.get_argument("type"))
 
         report_user.save()
 
@@ -981,6 +981,22 @@ class GroupCreateHandler(BaseHandler):
         User.objects(id=user_id).update_one(pull__user_words__word_id=word.id)
         User.objects(id=user_id).update_one(push__user_words=user_word)
 
+        # 加入聊天群组
+        self.rong_create_group(user_id,word_id,p_word)
+
+        # 聊天室的列表
+        group_user = GroupUsers.objects(word_id = word_id).first()
+        if group_user is None:
+            group_user = GroupUsers()
+            group_user.word_id = word_id
+            # 先保存数据
+            group_user.save()
+            word_group = WordGroup()
+            word_group.group_user_id = user_id
+            # 然后更新列表
+            group_user.update(push__users=word_group)
+
+
     def rong_create_group(self,user_id,word_id,p_word):
         api_client = ApiClient()
         response = api_client.group_create(user_id,word_id,p_word)
@@ -988,6 +1004,14 @@ class GroupCreateHandler(BaseHandler):
         code = response.get("code", None)
         if code is None and code != 200:
             raise tornado.web.HTTPError("40011", MessageUtils.ERROR_0011)
+
+    def rong_join_group(self,user_id,word_id,p_word):
+        api_client = ApiClient()
+        response = api_client.group_join(user_id,word_id,p_word)
+
+        code = response.get("code", None)
+        if code is None and code != 200:
+            raise tornado.web.HTTPError("40013", MessageUtils.ERROR_0013)
 # 销毁群组
 class GroupDismissHandler(BaseHandler):
     @tornado.web.asynchronous
@@ -1023,6 +1047,97 @@ class GroupDismissHandler(BaseHandler):
             response = api_client.group_dismiss(user_id,word_id)
             code = response.get("code", None)
             if code is None and code != 200:
-                raise tornado.web.HTTPError("40011", MessageUtils.ERROR_0011)
+                raise tornado.web.HTTPError("40012", MessageUtils.ERROR_0012)
 
             word.update(set__user_group=None)
+
+# 举报聊天室内的成员
+class GroupReportHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+
+        """
+            获取客户端的版本信息
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("report_user_id")
+            self.check_params_exists("type")
+            self.check_params_exists("group_id")
+            # 获取当前的客户端的版本
+            self.dismiss_group()
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def report_group_user(self):
+        user_id = self.get_argument("user_id")
+        type = self.get_argument("type")
+        report_user_id = self.get_argument("report_user_id")
+        group_id = self.get_argument("group_id")
+        report_user = ReportUser()
+        report_user.report_user_id = report_user_id
+        report_user.user_id = user_id
+        report_user.type = type
+        report_user.group_id = group_id
+        report_user.save()
+
+        # 判断是否大于3次举报
+        count = ReportUser.objects(group_id=group_id,report_user_id=report_user_id).count()
+        if count > 3:
+            GroupUsers.objects(word_id=group_id).update_one(pull__users__group_user_id =report_user_id)
+
+            api_client = ApiClient()
+            response = api_client.group_quit(report_user_id,group_id)
+            code = response.get("code", None)
+            if code is None and code != 200:
+                raise tornado.web.HTTPError("40014", MessageUtils.ERROR_0014)
+
+class GroupUserListHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+
+        """
+            获取聊天室内的用户列表
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("group_id")
+            # 获取当前的客户端的版本
+            self.get_group_user_list()
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def get_group_user_list(self):
+        user_id = self.get_argument("user_id")
+        group_id = self.get_argument("group_id")
+        page_index = int(self.get_argument("user_id",0))
+
+        group_user = GroupUsers.objects(word_id = group_id).first()
+
+        if group_user is not None and len(group_user.users) >0:
+            user_list = []
+            for word_group in group_user.users[page_index*20:page_index*20 + 20]:
+                user = User.objects(id=word_group.group_user_id).first()
+                if user is not None:
+                    user_list.append({"user_id":str(user.id),"name":user.user_name,"photo":user.user_photo_url})
+
+            if len(user_list) > 0:
+                self._result = user_list

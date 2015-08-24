@@ -21,6 +21,9 @@ application = tornado.web.Application([
 
     (r"/group/create", GroupCreateHandler),
     (r"/group/dismiss", GroupDismissHandler),
+    (r"/group/report", GroupReportHandler),
+    (r"/group/user/list", GroupUserListHandler),
+
     # TODO
     # 投诉的意见
     # 聊天成员列表

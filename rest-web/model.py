@@ -31,6 +31,13 @@ class Words(Document):
     # 创建时间
     created = DateTimeField(default=datetime.now)
 
+# 群组的用户列表
+class GroupUsers(Document):
+    # Word ID
+    word_id = StringField()
+    # 用户
+    users = ListField(EmbeddedDocumentField(WordGroup))
+
 class SysTag(Document):
     # 标签名称
     tag_name = StringField()
@@ -132,7 +139,9 @@ class ReportUser(Document):
     report_user_id = StringField()
     # 黑名单的地址
     user_id = StringField()
-    # 举报的文本
-    text = StringField()
+    # 被举报的类型
+    type = IntField()
+    # 所在的群组
+    group_id = StringField()
     # 举报时间
     created = DateTimeField(default=datetime.now)
