@@ -919,3 +919,110 @@ class OsVersionHandler(BaseHandler):
         version = OsVersion.objects(os_type=os_type).order_by("+created").first()
         if version is not None:
             self._result = {"version": version.version}
+
+class GroupCreateHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+
+        """
+            获取客户端的版本信息
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("word")
+            # 获取当前的客户端的版本
+            self.create_group()
+
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def create_group(self):
+        user_id = self.get_argument("user_id")
+        p_word = self.get_argument("word")
+        word_id = utils.md5(p_word)
+        word = Words.objects(word_id=word_id).first()
+
+        if word is not None:
+            if word.user_group is None:
+                self.rong_create_group(user_id,word_id,p_word)
+
+                word_group = WordGroup()
+                word_group.group_user_id = user_id
+                word.update(set__user_group=word_group)
+
+            word.update(inc__user_count=1)
+        else:
+            word = Words()
+            word.word_id = word_id
+            word.word = p_word
+            word.src_type = 2
+            word.word_type = None
+            word.user_count = 1
+            self.rong_create_group(user_id,word_id,p_word)
+
+            word_group = WordGroup()
+            word_group.group_user_id = user_id
+            word.user_group = word_group
+            word.save()
+
+        user_word = UserWords()
+        user_word.word_id = word.id
+        user_word.word = word.word
+        # 先删后插
+        User.objects(id=user_id).update_one(pull__user_words__word_id=word.id)
+        User.objects(id=user_id).update_one(push__user_words=user_word)
+
+    def rong_create_group(self,user_id,word_id,p_word):
+        api_client = ApiClient()
+        response = api_client.group_create(user_id,word_id,p_word)
+
+        code = response.get("code", None)
+        if code is None and code != 200:
+            raise tornado.web.HTTPError("40011", MessageUtils.ERROR_0011)
+# 销毁群组
+class GroupDismissHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+
+        """
+            获取客户端的版本信息
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("word")
+            # 获取当前的客户端的版本
+            self.dismiss_group()
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def dismiss_group(self):
+        user_id = self.get_argument("user_id")
+        p_word = self.get_argument("word")
+        word_id = utils.md5(p_word)
+        word = Words.objects(word_id=word_id).first()
+        if word is not None:
+            api_client = ApiClient()
+            response = api_client.group_dismiss(user_id,word_id)
+            code = response.get("code", None)
+            if code is None and code != 200:
+                raise tornado.web.HTTPError("40011", MessageUtils.ERROR_0011)
+
+            word.update(set__user_group=None)

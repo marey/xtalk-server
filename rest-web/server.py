@@ -18,6 +18,9 @@ application = tornado.web.Application([
     (r"/user/search", UserSearchHandler),
     (r"/user/report", UserReportHandler),
     (r"/os/version", OsVersionHandler),
+
+    (r"/group/create", GroupCreateHandler),
+    (r"/group/dismiss", GroupDismissHandler),
     # TODO
     # 投诉的意见
     # 聊天成员列表

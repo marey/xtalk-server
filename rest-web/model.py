@@ -6,6 +6,11 @@ from datetime import datetime
 
 from mongoengine import *
 
+class WordGroup(EmbeddedDocument):
+    # 群主
+    group_user_id = StringField()
+    # 创建时间
+    created = DateTimeField(default=datetime.now)
 
 class Words(Document):
     # id 是md5加密的
@@ -21,6 +26,8 @@ class Words(Document):
     word_type = IntField()
     # 该词汇里面的聊天的人数
     user_count = IntField()
+    # 用户群组
+    user_group = EmbeddedDocumentField(WordGroup)
     # 创建时间
     created = DateTimeField(default=datetime.now)
 
