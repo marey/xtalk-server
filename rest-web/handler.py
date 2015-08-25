@@ -523,7 +523,6 @@ class UserSearchHandler(BaseHandler):
             self.check_params_exists("user_id")
             # 检查参数的传入
             self.check_params_exists("word")
-            result = self.get_word_search()
             # 保存需要查询的词
             self.save_search_word()
 
