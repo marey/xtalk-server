@@ -71,23 +71,25 @@ class UserLoginHandler(BaseHandler):
 
     def login_user(self):
         type = int(self.get_argument("type"))
-        id = self.get_argument("id")
+        param_id = self.get_argument("id")
         if type == 2:
             # user_pwd = utils.md5(self.get_argument("pwd", default=None))
             user_pwd = self.get_argument("pwd")
-            user = User.objects(authen_type=type, login_id=id).first()
+            login_id = utils.md5(param_id)
+            user = User.objects(authen_type=type, login_id=login_id).first()
             if user is None:
                 raise tornado.web.HTTPError("40010", MessageUtils.ERROR_0010)
             elif cmp(user_pwd, user.user_pwd) != 0:
                 raise tornado.web.HTTPError("40003", MessageUtils.ERROR_0003)
-            reslut = {}
-            reslut["user_id"] = str(user.id)
-            reslut["name"] = user.user_name
-            reslut["photo"] = user.user_photo_url
-            reslut["sex"] = user.user_sex
-            reslut["region"] = user.user_region
-            reslut["signature"] = user.user_sign
-            reslut["phone"] = user.user_telephone
+            result = {}
+            result["user_id"] = str(user.id)
+            result["name"] = user.user_name
+            result["photo"] = user.user_photo_url
+            result["sex"] = user.user_sex
+            result["region"] = user.user_region
+            result["signature"] = user.user_sign
+            result["phone"] = user.user_telephone
+            result["token"] = user.rong_token
             # user_words = user.user_words
             # if user_words is not None:
             # word_list = []
@@ -96,7 +98,7 @@ class UserLoginHandler(BaseHandler):
             #
             # reslut["user_words"] = word_list
 
-            self._result = reslut
+            self._result = result
 
 
 # 用户修改密码
@@ -125,8 +127,8 @@ class UserChangePwdHandler(BaseHandler):
 
     def change_user_pwd(self):
         phone = self.get_argument("phone")
-
-        user = User.objects(authen_type=2, login_id=phone).first()
+        login_id = utils.md5(phone)
+        user = User.objects(authen_type=2, login_id=login_id).first()
         if user is None:
             raise tornado.web.HTTPError("40009", MessageUtils.ERROR_0009, phone)
         else:
@@ -147,7 +149,8 @@ class UserHandler(BaseHandler):
         try:
             # 检查参数的传入
             self.check_get_params()
-            self._result = self.get_user_info()
+            # 获取用户信息
+            self.get_user_info()
         except tornado.web.HTTPError, e:
             self._response["code"] = e.status_code
             self._response["message"] = e.log_message.format(e.args)
@@ -168,7 +171,7 @@ class UserHandler(BaseHandler):
             # 检查参数的传入
             self.check_post_params()
             # 获取登陆用户的信息
-            self._result = self.register_user()
+            self.register_user()
 
         except tornado.web.HTTPError, e:
             self._response["code"] = e.status_code
@@ -226,45 +229,51 @@ class UserHandler(BaseHandler):
         user = User.objects(id=user_id).first()
 
         if user is not None:
-            reslut = {}
-            reslut["name"] = user.user_name
-            reslut["photo"] = user.user_photo_url
-            reslut["sex"] = user.user_sex
-            reslut["region"] = user.user_region
-            reslut["signature"] = user.user_sign
-            reslut["phone"] = user.user_telephone
+            result = {}
+            result["name"] = user.user_name
+            result["photo"] = user.user_photo_url
+            result["sex"] = user.user_sex
+            result["region"] = user.user_region
+            result["signature"] = user.user_sign
+            result["phone"] = user.user_telephone
             user_words = user.user_words
             if user_words is not None:
                 word_list = []
                 for word in user_words[:6]:
                     word_list.append(word.word)
 
-                reslut["user_words"] = word_list
+                result["user_words"] = word_list
 
-            return reslut
-
-        return ""
+            self._result = result
 
     def register_user(self):
 
         # 0,表示微信，1，表示微博，2，表示手机号
-        type = int(self.get_argument("type", default=None))
-        login_id = self.get_argument("id", default=None)
+        type = int(self.get_argument("type", default=0))
+        param_id = self.get_argument("id", default=None)
 
-        user = None
-        if type == 2:
-            # pwd = utils.md5(self.get_argument("pwd", default=None))
-            pwd = self.get_argument("pwd")
-            user = User.objects(authen_type=type,
-                                login_id=login_id,
-                                user_pwd=pwd).first()
+        if type != 2:
+             # user = User.objects(authen_type=type,login_id=login_id).first()
+             raise tornado.web.HTTPError("40002", MessageUtils.ERROR_0002, "type")
 
-            if user is not None:
-                raise tornado.web.HTTPError("40006", MessageUtils.ERROR_0006, login_id)
+        # pwd = utils.md5(self.get_argument("pwd", default=None))
+        pwd = self.get_argument("pwd")
+        login_id = utils.md5(param_id)
+        user = User.objects(authen_type=type,
+                            login_id=login_id,
+                            user_pwd=pwd).first()
+
+        if user is not None:
+            raise tornado.web.HTTPError("40006", MessageUtils.ERROR_0006, login_id)
+
+        api_client = ApiClient()
+        response = api_client.user_get_token(login_id, user.user_name, user.user_photo_url)
+
+        code = response.get("code", None)
+        if code is not None and code == 200:
+            token = response.get("token")
         else:
-            # user = User.objects(authen_type=type,login_id=login_id).first()
-
-            raise tornado.web.HTTPError("40002", MessageUtils.ERROR_0002, "type")
+            raise tornado.web.HTTPError("40003", MessageUtils.ERROR_0003)
 
         if user is None:
             # 将数据保存到数据库中
@@ -277,21 +286,11 @@ class UserHandler(BaseHandler):
             user.user_photo_url = self.get_argument("photo", default=None)
             user.user_sex = self.get_argument("sex", default=None)
             user.user_region = self.get_argument("region", default=None)
+            user.rong_token = token
+            user.user_telephone = param_id
             user.save()
 
-        api_client = ApiClient()
-        response = api_client.user_get_token(user.pk, user.user_name, user.user_photo_url)
-
-        code = response.get("code", None)
-        if code is not None and code == 200:
-            token = response.get("token")
-        else:
-            raise tornado.web.HTTPError("40003", MessageUtils.ERROR_0003)
-
-        reslut = {}
-        reslut["user_id"] = str(user.pk)
-        reslut["token"] = token
-        return reslut
+        self._result =  {"user_id": str(user.pk),"token":token}
 
     def check_post_params(self):
 

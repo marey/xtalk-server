@@ -82,7 +82,7 @@ class UserWords(EmbeddedDocument):
 class User(Document):
     # 认证类型，0.表示微信，1.表示微博，2表示手机号单独注册
     authen_type = IntField()
-    # type为0,1的场合下，为open_id,2表示的手机号
+    # type为0,1的场合下，为open_id,2表示的手机号的MD5加密值
     login_id = StringField()
     # 用户名称
     user_name = StringField()
@@ -102,6 +102,8 @@ class User(Document):
     user_telephone = StringField()
     # 用户状态
     user_status = IntField()
+    # 融云的token
+    rong_token = StringField()
     # 用户的聊天室 tag
     user_words = ListField(EmbeddedDocumentField(UserWords))
     # 用户自定义频道
