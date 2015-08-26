@@ -982,7 +982,7 @@ class GroupCreateHandler(BaseHandler):
         User.objects(id=user_id).update_one(push__user_words=user_word)
 
         # 加入聊天群组
-        self.rong_create_group(user_id,word_id,p_word)
+        self.rong_join_group(user_id,word_id,p_word)
 
         # 聊天室的列表
         group_user = GroupUsers.objects(word_id = word_id).first()
@@ -1012,6 +1012,34 @@ class GroupCreateHandler(BaseHandler):
         code = response.get("code", None)
         if code is None and code != 200:
             raise tornado.web.HTTPError("40013", MessageUtils.ERROR_0013)
+
+#　加入群组
+class GroupJoinHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+
+        """
+            获取客户端的版本信息
+        :return: 处理后的json的数组
+        """
+
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("word")
+            # 加入聊天群组
+            self.join_group()
+
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+
 # 销毁群组
 class GroupDismissHandler(BaseHandler):
     @tornado.web.asynchronous

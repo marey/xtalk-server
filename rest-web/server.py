@@ -19,7 +19,8 @@ application = tornado.web.Application([
     (r"/user/report", UserReportHandler),
     (r"/os/version", OsVersionHandler),
 
-    (r"/group/create", GroupCreateHandler),
+    # (r"/group/create", GroupCreateHandler),
+    (r"/group/join", GroupJoinHandler),
     (r"/group/dismiss", GroupDismissHandler),
     (r"/group/report", GroupReportHandler),
     (r"/group/user/list", GroupUserListHandler),
