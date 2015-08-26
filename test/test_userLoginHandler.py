@@ -8,7 +8,7 @@ from urllib import urlencode
 
 class TestUserLoginHandler(TestCase):
     def test_post(self):
-        data = {"id": "test", "type": "2"}
+        data = {"id": "18910062599", "type": "2"}
         url = 'http://127.0.0.1:8090/user/login?'
 
         url = url + urlencode(data)

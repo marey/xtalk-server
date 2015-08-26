@@ -163,7 +163,7 @@ class UserHandler(BaseHandler):
     def post(self):
 
         """
-            实际上是做user的login操作
+            注册用户
         :return: 处理后的json的数组
         """
 
@@ -251,6 +251,8 @@ class UserHandler(BaseHandler):
         # 0,表示微信，1，表示微博，2，表示手机号
         type = int(self.get_argument("type", default=0))
         param_id = self.get_argument("id", default=None)
+        param_name = self.get_argument("name",default="")
+        user_photo_url = self.get_argument("photo",default="")
 
         if type != 2:
              # user = User.objects(authen_type=type,login_id=login_id).first()
@@ -267,7 +269,7 @@ class UserHandler(BaseHandler):
             raise tornado.web.HTTPError("40006", MessageUtils.ERROR_0006, login_id)
 
         api_client = ApiClient()
-        response = api_client.user_get_token(login_id, user.user_name, user.user_photo_url)
+        response = api_client.user_get_token(login_id, param_name, user_photo_url)
 
         code = response.get("code", None)
         if code is not None and code == 200:
