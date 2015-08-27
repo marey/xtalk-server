@@ -5,9 +5,23 @@ import tornado.ioloop
 import tornado.web
 
 from handler import *
+from web_handler import *
+
+
+settings = {
+    "static_path": os.path.join(os.path.dirname(__file__), "static"),
+    "template_path": os.path.join(os.path.dirname(__file__), "page"),
+}
 
 application = tornado.web.Application([
-    # (r"/", MainHandler),
+    (r"/", MainHandler),
+    (r"/web/login", WebLoginHandler),
+    (r"/web/main/left", WebMainLeftHandler),
+    (r"/web/main/top", WebMainTopHandler),
+    (r"/web/main/index", WebMainIndexHandler),
+
+
+
     (r"/user", UserHandler),
     (r"/user/login", UserLoginHandler),
     (r"/user/pwd", UserChangePwdHandler),
@@ -32,7 +46,7 @@ application = tornado.web.Application([
     # (r"/test", TestHandler),
 
     # (r"/user/upload_photo", UserUploadPhotoHandler),
-])
+],**settings)
 
 if __name__ == "__main__":
     application.listen(8090)

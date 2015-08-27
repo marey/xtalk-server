@@ -111,7 +111,7 @@ class MethodNotAllowed(ClientError):
 
 class ApiClient(object):
     api_host = "http://api.cn.ronghub.com"
-    response_type = "json"
+    response_type = "/static/json"
 
     ACTION_USER_TOKEN = "/user/getToken"
     ACTION_USER_REFRESH = "/user/refresh"
