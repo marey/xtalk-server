@@ -34,3 +34,7 @@ class WebLoginHandler(BaseHandler):
         user_pwd = self.get_argument("user_pwd")
         print user_name,user_pwd
         self.render("main.html")
+
+class WebWordsGetHandler(BaseHandler):
+    def get(self):
+        self.render("right.html")

@@ -19,6 +19,7 @@ application = tornado.web.Application([
     (r"/web/main/left", WebMainLeftHandler),
     (r"/web/main/top", WebMainTopHandler),
     (r"/web/main/index", WebMainIndexHandler),
+    (r"/web/words/get", WebWordsGetHandler),
 
 
 
