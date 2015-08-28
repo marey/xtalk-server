@@ -19,6 +19,8 @@ class BaiDuSpider(scrapy.Spider):
         soup = BeautifulSoup(response.body)
         news_list = soup.find_all("td", class_="keyword")
         for news in news_list:
+            if news.a.string is None:
+                continue
             news_title = news.a.string.encode("utf8")
             md5obj = hashlib.md5()
             md5obj.update(news_title)

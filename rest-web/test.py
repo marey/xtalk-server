@@ -6,7 +6,7 @@ import hashlib
 if __name__ == '__main__':
     # unittest.main()
 
-    value = "这个0"
+    value = "郑州大妈街头打人"
     md5obj = hashlib.md5()
     md5obj.update(value)
     print md5obj.digest()
