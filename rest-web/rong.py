@@ -111,7 +111,7 @@ class MethodNotAllowed(ClientError):
 
 class ApiClient(object):
     api_host = "http://api.cn.ronghub.com"
-    response_type = "/static/json"
+    response_type = "json"
 
     ACTION_USER_TOKEN = "/user/getToken"
     ACTION_USER_REFRESH = "/user/refresh"
@@ -143,15 +143,13 @@ class ApiClient(object):
     ACTION_CHATROOM_USER_QUERY = "/chatroom/user/query"
 
     def __init__(self, key=None, secret=None):
-        self._app_key = key
-        self._app_secret = secret
+        self._app_key = "vnroth0krcr4o"
+        self._app_secret = "yvHCvOiB8KaK"
 
         if self._app_key is None:
-            # self._app_key = os.environ.get('rongcloud_app_key')
-            self._app_key = "vnroth0krcr4o"
+            self._app_key = os.environ.get('rongcloud_app_key')
         if self._app_secret is None:
-            # self._app_secret = os.environ.get('rongcloud_app_secret')
-            self._app_secret="yvHCvOiB8KaK"
+            self._app_secret = os.environ.get('rongcloud_app_secret')
 
     @staticmethod
     def _merge_dict(data, *override):
