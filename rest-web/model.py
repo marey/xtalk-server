@@ -3,6 +3,7 @@
 __author__ = 'murui'
 
 from datetime import datetime
+from datetime import datetime
 
 from mongoengine import *
 
@@ -11,6 +12,26 @@ class WordGroup(EmbeddedDocument):
     group_user_id = StringField()
     # 创建时间
     created = DateTimeField(default=datetime.now)
+
+class TopWords(Document):
+    # 类型
+    type = IntField()
+    # word_id
+    word_id = StringField()
+    # 查询的词汇
+    word = StringField()
+    # 创建时间
+    created = DateTimeField(default=datetime.now)
+    meta = {
+        'indexes': [
+            'word_id',
+            ('word_id', '-type'),
+            {
+                'fields': ['created'],
+                'expireAfterSeconds': 7200
+            }
+        ]
+    }
 
 class Words(Document):
     # id 是md5加密的

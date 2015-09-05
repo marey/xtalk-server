@@ -20,6 +20,16 @@ application = tornado.web.Application([
     (r"/web/main/top", WebMainTopHandler),
     (r"/web/main/index", WebMainIndexHandler),
     (r"/web/words/get", WebWordsGetHandler),
+    (r"/web/words/add", WebWordsAddHandler),
+    (r"/web/words/search", WebWordSearchHandler),
+    (r"/web/words/top_search", WebWordTopSearchHandler),
+    (r"/web/words/index", WebWordIndexHandler),
+    (r"/web/words/top/add", WebWordAddTopHandler),
+    (r"/web/words/top/del", WebWordTopDelHandler),
+
+
+
+
 
 
 

@@ -23,25 +23,33 @@ class BaseHandler(tornado.web.RequestHandler):
         :param key:需要判断的参数
         """
         value = self.get_argument(key, default=None)
+
         # 判断是否为空
-        if value is None:
+        if value is None or len(value) == 0:
             raise tornado.web.HTTPError("40001", MessageUtils.ERROR_0001, key)
-            # if cmp("user_id", key) == 0:
-            # self.check_user_id(key)
+        if cmp("user_id", key) == 0:
+            self.check_user_id(value)
 
     # 验证有效性
     def check_user_id(self, user_id):
-        try:
-            value = ObjectId(user_id)
-            # 判断是否为空
-        except:
-            raise tornado.web.HTTPError("40005", MessageUtils.ERROR_0005, user_id)
+
+        if ObjectId.is_valid(user_id) is False:
+            raise tornado.web.HTTPError("40002", MessageUtils.ERROR_0002, user_id)
 
     def on_write(self):
         if self._result is not None:
             self._response["result"] = self._result
         # self.set_header("Content-Type", "application/json")
         self.write(self._response)
+
+    def write_error(self, status_code, exception=None, **kwargs):
+        if status_code == 500:
+            response_result = {"code": "40015"}
+            exec_info = kwargs.get("exc_info", None)
+            if exec_info is not None and len(exec_info) == 3:
+                response_result["message"] = MessageUtils.ERROR_0015.format(exec_info[1])
+
+            self.write(response_result)
 
 
 class UserLoginHandler(BaseHandler):
@@ -251,12 +259,12 @@ class UserHandler(BaseHandler):
         # 0,表示微信，1，表示微博，2，表示手机号
         type = int(self.get_argument("type", default=0))
         param_id = self.get_argument("id", default=None)
-        param_name = self.get_argument("name",default="")
-        user_photo_url = self.get_argument("photo",default="")
+        param_name = self.get_argument("name", default="")
+        user_photo_url = self.get_argument("photo", default="")
 
         if type != 2:
-             # user = User.objects(authen_type=type,login_id=login_id).first()
-             raise tornado.web.HTTPError("40002", MessageUtils.ERROR_0002, "type")
+            # user = User.objects(authen_type=type,login_id=login_id).first()
+            raise tornado.web.HTTPError("40002", MessageUtils.ERROR_0002, "type")
 
         # pwd = utils.md5(self.get_argument("pwd", default=None))
         pwd = self.get_argument("pwd")
@@ -292,7 +300,7 @@ class UserHandler(BaseHandler):
             user.user_telephone = param_id
             user.save()
 
-        self._result =  {"user_id": str(user.pk),"token":token}
+        self._result = {"user_id": str(user.pk), "token": token}
 
     def check_post_params(self):
 
@@ -438,11 +446,7 @@ class UserSearchHandler(BaseHandler):
             user_words = user.user_words[:30]
             word_list = []
             for user_word in user_words:
-                if user_word.word is None:
-                    word = Words.objects(id=user_word.word_id).first()
-                    word_list.append(word.word)
-                else:
-                    word_list.append(user_word.word)
+                word_list.append(user_word.word)
 
             self._result = word_list
 
@@ -542,7 +546,7 @@ class UserSearchHandler(BaseHandler):
             word = Words()
             word.word_id = word_id
             word.word = p_word
-            word.src_type = 2
+            word.src_type = 0
             word.word_type = None
             word.user_count = 1
 
@@ -551,10 +555,10 @@ class UserSearchHandler(BaseHandler):
             word.update(inc__user_count=1)
 
         user_word = UserWords()
-        user_word.word_id = word.id
+        user_word.word_id = word.word_id
         user_word.word = word.word
         # 先删后插
-        User.objects(id=user_id).update_one(pull__user_words__word_id=word.id)
+        User.objects(id=user_id).update_one(pull__user_words__word_id=word.word_id)
         User.objects(id=user_id).update_one(push__user_words=user_word)
 
 
@@ -586,23 +590,60 @@ class WordsHandler(BaseHandler):
 
         result = []
         if type == 0:
-            # 0 表示获取所有的聊天的词汇
+            # 1 新闻热点
             words = self.get_baidu_words()
             if words is not None:
                 result.append(words)
-            # 1 大家都在聊
+            # 2 影视综艺
+            words = self.get_film_words()
+            if words is not None:
+                result.append(words)
+            # 3 热门词条
             words = self.get_top_count_words()
+            if words is not None:
+                result.append(words)
+            # 4 新创词条
+            words = self.get_new_created_words()
+            if words is not None:
+                result.append(words)
+            # 5 状态标签
+            words = self.get_status_words()
+            if words is not None:
+                result.append(words)
+
+            # 6 我的词条
+            words = self.get_my_words()
             if words is not None:
                 result.append(words)
 
         elif type == 1:
-            # 0 表示获取所有的聊天的词汇
+            # 1 新闻热点
             words = self.get_baidu_words()
             if words is not None:
                 result.append(words)
         elif type == 2:
-            # 0 大家都在聊
+            # 0 影视综艺
+            words = self.get_film_words()
+            if words is not None:
+                result.append(words)
+        elif type == 3:
+            # 0 热门词条
             words = self.get_top_count_words()
+            if words is not None:
+                result.append(words)
+        elif type == 4:
+            # 0 新创词条
+            words = self.get_new_created_words()
+            if words is not None:
+                result.append(words)
+        elif type == 5:
+            # 0 状态标签
+            words = self.get_status_words()
+            if words is not None:
+                result.append(words)
+        elif type == 6:
+            # 0 状态标签
+            words = self.get_my_words()
             if words is not None:
                 result.append(words)
 
@@ -611,21 +652,116 @@ class WordsHandler(BaseHandler):
 
     def get_baidu_words(self):
         index = int(self.get_argument("page_index", 0))
-        words = Words.objects(src_type=1).order_by("+created")[index * 30:(index + 1) * 30]
-        if len(words) == 0:
-            words = Words.objects(src_type=1).order_by("+created")[0:30]
+        start_index = index * 30
+        top_words_count = TopWords.objects(type=1).count()
+        words = None
+        if top_words_count == 0:
+            words = Words.objects(src_type=1).order_by("+created")[index * 30:(index + 1) * 30]
+            if len(words) == 0:
+                words = Words.objects(src_type=1).order_by("+created")[0:30]
+        else:
+            if top_words_count >= (index + 1) * 30:
+                words = TopWords.objects(type=1).order_by("+created")[index * 30:(index + 1) * 30]
+            elif top_words_count < start_index:
+                words = Words.objects(src_type=1).order_by("+created")[start_index:(index + 1) * 30]
+                if len(words) == 0:
+                    words = Words.objects(src_type=1).order_by("+created")[0:30]
+            else:
+                words = TopWords.objects(type=1).order_by("+created")[start_index:top_words_count]
+                word_list = []
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
 
-        if len(words) == 0:
+                    word_list.append(word_map)
+
+                words = Words.objects(src_type=1).order_by("+created")[0:(index + 1) * 30 - top_words_count]
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                return word_list
+
+        if words is None or len(words) == 0:
             return None
 
-        result = {"type": 1, "type_name": "热点词汇"}
+        result = {"type": 1, "type_name": "新闻热点"}
         word_list = []
 
         for word in words:
             word_map = {}
             if word.word_type == 1:
                 word_map["type"] = "新"
+            word_map["word_id"] = str(word.word_id)
+            word_map["word"] = word.word
 
+            word_list.append(word_map)
+
+        result["words"] = word_list
+
+        return result
+
+
+    def get_film_words(self):
+        result = {"type": 2, "type_name": "影视综艺"}
+        index = int(self.get_argument("page_index", 0))
+        start_index = index * 30
+        top_words_count = TopWords.objects(type=2).count()
+        words = None
+        if top_words_count == 0:
+            words = Words.objects(src_type=2).order_by("+created")[index * 30:(index + 1) * 30]
+            if len(words) == 0:
+                words = Words.objects(src_type=2).order_by("+created")[0:30]
+        else:
+            if top_words_count >= (index + 1) * 30:
+                words = TopWords.objects(type=2).order_by("+created")[index * 30:(index + 1) * 30]
+            elif top_words_count < start_index:
+                words = Words.objects(src_type=2).order_by("+created")[start_index:(index + 1) * 30]
+                if len(words) == 0:
+                    words = Words.objects(src_type=2).order_by("+created")[0:30]
+            else:
+                words = TopWords.objects(type=2).order_by("+created")[start_index:top_words_count]
+                word_list = []
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                words = Words.objects(src_type=2).order_by("+created")[0:(index + 1) * 30 - top_words_count]
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                result["words"] = word_list
+                return result
+
+        if words is None or len(words) == 0:
+            return None
+
+        word_list = []
+
+        for word in words:
+            word_map = {}
+            if word.word_type == 1:
+                word_map["type"] = "新"
+            word_map["word_id"] = str(word.word_id)
             word_map["word"] = word.word
 
             word_list.append(word_map)
@@ -635,24 +771,211 @@ class WordsHandler(BaseHandler):
         return result
 
     def get_top_count_words(self):
-        index = int(self.get_argument("page_index", 0))
-        words = Words.objects().order_by("-user_count")[index * 30:(index + 1) * 30]
-        if len(words) == 0:
-            words = Words.objects().order_by("-user_count")[0:30]
 
-        if len(words) == 0:
+        result = {"type": 3, "type_name": "热门词条"}
+        index = int(self.get_argument("page_index", 0))
+        start_index = index * 30
+        top_words_count = TopWords.objects(type=3).count()
+        words = None
+        if top_words_count == 0:
+            words = Words.objects().order_by("-user_count")[index * 30:(index + 1) * 30]
+            if len(words) == 0:
+                words = Words.objects().order_by("-user_count")[0:30]
+        else:
+            if top_words_count >= (index + 1) * 30:
+                words = TopWords.objects(type=3).order_by("+created")[index * 30:(index + 1) * 30]
+            elif top_words_count < start_index:
+                words = Words.objects().order_by("-user_count")[index * 30:(index + 1) * 30]
+                if len(words) == 0:
+                    words = Words.objects().order_by("-user_count")[0:30]
+            else:
+                words = TopWords.objects(type=3).order_by("+created")[start_index:top_words_count]
+                word_list = []
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                words = Words.objects(src_type=4).order_by("-user_count")[0:(index + 1) * 30 - top_words_count]
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                result["words"] = word_list
+                return result
+
+        if words is None or len(words) == 0:
             return None
 
-        result = {"type": 2, "type_name": "大家都在聊"}
         word_list = []
 
         for word in words:
             word_map = {}
             if word.word_type == 1:
                 word_map["type"] = "新"
-
+            word_map["word_id"] = str(word.word_id)
             word_map["word"] = word.word
 
+            word_list.append(word_map)
+
+        result["words"] = word_list
+
+        return result
+
+
+    def get_new_created_words(self):
+        result = {"type": 4, "type_name": "新创词条"}
+        index = int(self.get_argument("page_index", 0))
+        start_index = index * 30
+        top_words_count = TopWords.objects(type=4).count()
+        words = None
+        if top_words_count == 0:
+            words = Words.objects(src_type=4).order_by("+created")[index * 30:(index + 1) * 30]
+            if len(words) == 0:
+                words = Words.objects(src_type=4).order_by("+created")[0:30]
+        else:
+            if top_words_count >= (index + 1) * 30:
+                words = TopWords.objects(type=4).order_by("+created")[index * 30:(index + 1) * 30]
+            elif top_words_count < start_index:
+                words = Words.objects(src_type=4).order_by("+created")[start_index:(index + 1) * 30]
+                if len(words) == 0:
+                    words = Words.objects(src_type=4).order_by("+created")[0:30]
+            else:
+                words = TopWords.objects(type=4).order_by("+created")[start_index:top_words_count]
+                word_list = []
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                words = Words.objects(src_type=4).order_by("+created")[0:(index + 1) * 30 - top_words_count]
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                result["words"] = word_list
+                return result
+
+        if words is None or len(words) == 0:
+            return None
+
+        word_list = []
+
+        for word in words:
+            word_map = {}
+            if word.word_type == 1:
+                word_map["type"] = "新"
+            word_map["word_id"] = str(word.word_id)
+            word_map["word"] = word.word
+
+            word_list.append(word_map)
+
+        result["words"] = word_list
+
+        return result
+
+    def get_status_words(self):
+        result = {"type": 5, "type_name": "状态标签"}
+        index = int(self.get_argument("page_index", 0))
+        start_index = index * 30
+        top_words_count = TopWords.objects(type=5).count()
+        words = None
+        if top_words_count == 0:
+            words = Words.objects(src_type=5).order_by("+created")[index * 30:(index + 1) * 30]
+            if len(words) == 0:
+                words = Words.objects(src_type=5).order_by("+created")[0:30]
+        else:
+            if top_words_count >= (index + 1) * 30:
+                words = TopWords.objects(type=5).order_by("+created")[index * 30:(index + 1) * 30]
+            elif top_words_count < start_index:
+                words = Words.objects(src_type=5).order_by("+created")[start_index:(index + 1) * 30]
+                if len(words) == 0:
+                    words = Words.objects(src_type=5).order_by("+created")[0:30]
+            else:
+                words = TopWords.objects(type=5).order_by("+created")[start_index:top_words_count]
+                word_list = []
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                words = Words.objects(src_type=5).order_by("+created")[0:(index + 1) * 30 - top_words_count]
+                for word in words:
+                    word_map = {}
+                    if word.word_type == 1:
+                        word_map["type"] = "新"
+                    word_map["word_id"] = str(word.word_id)
+                    word_map["word"] = word.word
+
+                    word_list.append(word_map)
+
+                result["words"] = word_list
+                return result
+
+        if words is None or len(words) == 0:
+            return None
+
+        word_list = []
+
+        for word in words:
+            word_map = {}
+            if word.word_type == 1:
+                word_map["type"] = "新"
+            word_map["word_id"] = str(word.word_id)
+            word_map["word"] = word.word
+
+            word_list.append(word_map)
+
+        result["words"] = word_list
+
+        return result
+
+    def get_my_words(self):
+        index = int(self.get_argument("page_index", 0))
+        user_id = self.get_argument("user_id")
+        user = User.objects(id=user_id).first()
+        if user is None:
+            raise tornado.web.HTTPError("40004", MessageUtils.ERROR_0004, user_id)
+        user_words = user.user_words
+        if user_words is None or len(user_words) == 0:
+            return None
+        if len(user_words) > index * 30:
+            user_words = user_words[index * 30:(index + 1) * 30]
+        else:
+            user_words = user_words[:30]
+
+        if len(user_words) == 0:
+            return None
+
+        result = {"type": 6, "type_name": "我的词条"}
+        word_list = []
+
+        for word in user_words:
+            word_map = {}
+            word_map["word_id"] = str(word.word_id)
+            word_map["word"] = word.word
             word_list.append(word_map)
 
         result["words"] = word_list
@@ -746,6 +1069,9 @@ class UserBlackHandler(BaseHandler):
         user_id = self.get_argument("user_id")
         black_user_id = self.get_argument("black_user_id")
         black_user = BlackUser(user_id=black_user_id)
+
+        # 先删后插
+        User.objects(id=user_id).update_one(pull__black_users__user_id=black_user_id)
         User.objects(id=user_id).update_one(push__black_users=black_user)
 
     @tornado.web.asynchronous
@@ -782,8 +1108,7 @@ class UserBlackHandler(BaseHandler):
     def del_black_user(self):
         user_id = self.get_argument("user_id")
         black_user_id = self.get_argument("black_user_id")
-        black_user = BlackUser(user_id=black_user_id)
-        User.objects(id=user_id).update_one(pull__black_users=black_user)
+        User.objects(id=user_id).update_one(pull__black_users__user_id=black_user_id)
 
 
 class UserOtherHandler(BaseHandler):
@@ -920,6 +1245,7 @@ class OsVersionHandler(BaseHandler):
         if version is not None:
             self._result = {"version": version.version}
 
+
 class GroupCreateHandler(BaseHandler):
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -953,7 +1279,7 @@ class GroupCreateHandler(BaseHandler):
 
         if word is not None:
             if word.user_group is None:
-                self.rong_create_group(user_id,word_id,p_word)
+                self.rong_create_group(user_id, word_id, p_word)
 
                 word_group = WordGroup()
                 word_group.group_user_id = user_id
@@ -964,10 +1290,10 @@ class GroupCreateHandler(BaseHandler):
             word = Words()
             word.word_id = word_id
             word.word = p_word
-            word.src_type = 2
+            word.src_type = 0
             word.word_type = None
             word.user_count = 1
-            self.rong_create_group(user_id,word_id,p_word)
+            self.rong_create_group(user_id, word_id, p_word)
 
             word_group = WordGroup()
             word_group.group_user_id = user_id
@@ -982,10 +1308,10 @@ class GroupCreateHandler(BaseHandler):
         User.objects(id=user_id).update_one(push__user_words=user_word)
 
         # 加入聊天群组
-        self.rong_join_group(user_id,word_id,p_word)
+        self.rong_join_group(user_id, word_id, p_word)
 
         # 聊天室的列表
-        group_user = GroupUsers.objects(word_id = word_id).first()
+        group_user = GroupUsers.objects(word_id=word_id).first()
         if group_user is None:
             group_user = GroupUsers()
             group_user.word_id = word_id
@@ -996,24 +1322,27 @@ class GroupCreateHandler(BaseHandler):
             # 然后更新列表
             group_user.update(push__users=word_group)
 
+        self._result = {"group_id": word.id, "group_name": word.word}
 
-    def rong_create_group(self,user_id,word_id,p_word):
+
+    def rong_create_group(self, user_id, word_id, p_word):
         api_client = ApiClient()
-        response = api_client.group_create(user_id,word_id,p_word)
+        response = api_client.group_create(user_id, word_id, p_word)
 
         code = response.get("code", None)
         if code is None and code != 200:
             raise tornado.web.HTTPError("40011", MessageUtils.ERROR_0011)
 
-    def rong_join_group(self,user_id,word_id,p_word):
+    def rong_join_group(self, user_id, word_id, p_word):
         api_client = ApiClient()
-        response = api_client.group_join(user_id,word_id,p_word)
+        response = api_client.group_join(user_id, word_id, p_word)
 
         code = response.get("code", None)
         if code is None and code != 200:
             raise tornado.web.HTTPError("40013", MessageUtils.ERROR_0013)
 
-#　加入群组
+
+# 加入群组
 class GroupJoinHandler(BaseHandler):
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -1072,12 +1401,13 @@ class GroupDismissHandler(BaseHandler):
         word = Words.objects(word_id=word_id).first()
         if word is not None:
             api_client = ApiClient()
-            response = api_client.group_dismiss(user_id,word_id)
+            response = api_client.group_dismiss(user_id, word_id)
             code = response.get("code", None)
             if code is None and code != 200:
                 raise tornado.web.HTTPError("40012", MessageUtils.ERROR_0012)
 
             word.update(set__user_group=None)
+
 
 # 举报聊天室内的成员
 class GroupReportHandler(BaseHandler):
@@ -1119,15 +1449,16 @@ class GroupReportHandler(BaseHandler):
         report_user.save()
 
         # 判断是否大于3次举报
-        count = ReportUser.objects(group_id=group_id,report_user_id=report_user_id).count()
+        count = ReportUser.objects(group_id=group_id, report_user_id=report_user_id).count()
         if count > 3:
-            GroupUsers.objects(word_id=group_id).update_one(pull__users__group_user_id =report_user_id)
+            GroupUsers.objects(word_id=group_id).update_one(pull__users__group_user_id=report_user_id)
 
             api_client = ApiClient()
-            response = api_client.group_quit(report_user_id,group_id)
+            response = api_client.group_quit(report_user_id, group_id)
             code = response.get("code", None)
             if code is None and code != 200:
                 raise tornado.web.HTTPError("40014", MessageUtils.ERROR_0014)
+
 
 class GroupUserListHandler(BaseHandler):
     @tornado.web.asynchronous
@@ -1156,16 +1487,16 @@ class GroupUserListHandler(BaseHandler):
     def get_group_user_list(self):
         user_id = self.get_argument("user_id")
         group_id = self.get_argument("group_id")
-        page_index = int(self.get_argument("user_id",0))
+        page_index = int(self.get_argument("user_id", 0))
 
-        group_user = GroupUsers.objects(word_id = group_id).first()
+        group_user = GroupUsers.objects(word_id=group_id).first()
 
-        if group_user is not None and len(group_user.users) >0:
+        if group_user is not None and len(group_user.users) > 0:
             user_list = []
-            for word_group in group_user.users[page_index*20:page_index*20 + 20]:
+            for word_group in group_user.users[page_index * 20:page_index * 20 + 20]:
                 user = User.objects(id=word_group.group_user_id).first()
                 if user is not None:
-                    user_list.append({"user_id":str(user.id),"name":user.user_name,"photo":user.user_photo_url})
+                    user_list.append({"user_id": str(user.id), "name": user.user_name, "photo": user.user_photo_url})
 
             if len(user_list) > 0:
                 self._result = user_list

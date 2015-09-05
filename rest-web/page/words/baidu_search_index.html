@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>百度热搜关键词</title>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/datatable/media/css/jquery.dataTables.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/static/datatable/media/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/js/select-ui.min.js"></script>
+    <link href="/static/css/select.css" rel="stylesheet" type="text/css"/>
+
+</head>
+
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">词汇管理</a></li>
+        <li><a href="#">百度热搜关键词</a></li>
+    </ul>
+</div>
+<div class="mainindex">
+
+
+    <div id="usual1" class="usual">
+
+        <div class="itab">
+            <ul>
+                <li><a href="#tab1" class="selected" onclick="refresh_words_table();">词条</a></li>
+                <li><a href="#tab2" onclick="btnTopSearch_click()">置顶词条</a></li>
+                <li><a href="#tab3">词条新增</a></li>
+            </ul>
+        </div>
+
+        <div id="tab1" class="tabson">
+            <ul class="seachform">
+
+                <li><label>检索词</label><input name="key_word" type="text" class="scinput" value="{{key_word}}"/>
+                </li>
+                <li><label>词汇类型</label>
+
+                    <div class="vocation">
+                        <select name="word_type" class="select3">
+                            <option value="1">百度热搜</option>
+                            <option value="2">影视综艺</option>
+                            <option value="3">热门词条</option>
+                            <option value="4">新创词条</option>
+                            <option value="5">状态标签</option>
+                        </select>
+                    </div>
+                </li>
+                <li><label>&nbsp;</label><input name="" type="button" class="scbtn" onclick="btnSearch_click()"
+                                                value="查询"/></li>
+
+            </ul>
+
+            <table id="example" class="display" cellspacing="0" width="100%">
+            </table>
+        </div>
+
+
+        <div id="tab2" class="tabson">
+            <ul class="seachform">
+                <li><label>检索词</label><input id="top_key_word" type="text" class="scinput" text="{{top_key_word}}"/>
+                </li>
+                <li><label>词汇类型</label>
+
+                    <div class="vocation">
+                        <select id="top_word_type" class="select3">
+                            <option value="1">百度热搜</option>
+                            <option value="2">影视综艺</option>
+                            <option value="3">热门词条</option>
+                            <option value="4">新创词条</option>
+                            <option value="5">状态标签</option>
+                        </select>
+                    </div>
+                </li>
+
+                <li><label>&nbsp;</label><input name="" type="button" class="scbtn" onclick="btnTopSearch_click()"
+                                                value="查询"/></li>
+
+            </ul>
+            <table id="example2" class="display" cellspacing="0" width="100%">
+            </table>
+        </div>
+
+
+         <div id="tab3" class="tabson">
+
+            <ul class="forminfo">
+                <li><label>词条名称：<b>*</b></label><input id="txt_new_word" type="text" class="dfinput" value=""
+                                                      style="width:518px;"/></li>
+
+                <li><label>词条类型：<b>*</b></label>
+
+
+                    <div class="vocation">
+                        <select id="new_word_type" class="select3">
+                            <option value="1">百度热搜</option>
+                            <option value="2">影视综艺</option>
+                            <option value="3">热门词条</option>
+                            <option value="4">新创词条</option>
+                            <option value="5">状态标签</option>
+                        </select>
+                    </div>
+
+                </li>
+
+                <li><label>是否置顶：<b>*</b></label>
+
+                    <div class="vocation">
+                        <select id="top_flg" class="select3">
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </div>
+
+
+                </li>
+                <li><label>&nbsp;</label><input name="" type="button" class="btn" onclick="btnNewWord_click()" value="马上添加"/></li>
+            </ul>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript" charset="utf8" src="/static/datatable/media/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+
+    function btnNewWord_click() {
+        var word = $('#txt_new_word').val();
+        var word_type = $('#new_word_type').val();
+        var top_flg = $('#top_flg').val();
+        alert(top_flg);
+        if (word.length == 0){
+            alert("词条名称不能为空！");
+            return false;
+        }
+        var params = { "word": word, "word_type": word_type,"top_flg":top_flg};
+
+        $.ajax({
+            url: "/web/words/add",data:params, success: function (data) {
+                alert(data);
+            }
+        });
+    }
+
+    function btnSearch_click() {
+        var key_word = $('#key_word').text();
+        var word_type = $('#word_type').select();
+        $.ajax({
+            url: "/web/words/search", data: {"key_word": key_word, "word_type": word_type}, success: function (data) {
+                $('#top_word_body').html(data);
+            }
+        });
+    }
+
+    function btnTopSearch_click() {
+        refresh_top_words_table();
+    }
+
+    function add_top_word(id) {
+
+        $.ajax({
+            url: "/web/words/top/add", data: {'id': id}, success: function (data) {
+                alert("置顶成功！");
+            }
+        });
+    }
+
+    function del_top_word(id) {
+
+        $.ajax({
+            url: "/web/words/top/del", data: {'id': id}, success: function (data) {
+                refresh_top_words_table();
+                alert("删除成功！");
+            }
+        });
+    }
+
+    function refresh_words_table() {
+        var key_word = $('#key_word').val();
+        var word_type = $('#word_type').val();
+        var data = {"key_word": key_word, "word_type": word_type};
+
+        $('#example').dataTable({
+                    /*基本参数设置，以下参数设置和默认效果一致*/
+                    destroy: true,
+                    "bPaginate": true, //翻页功能
+                    "bLengthChange": false, //改变每页显示数据数量
+                    "bFilter": false, //过滤功能
+                    "bSort": false, //排序功能
+                    "bInfo": true,//页脚信息
+                    "bAutoWidth": true,//自动宽度
+                    /*默认排序设置*/
+                    "aaSorting": [[2, "desc"]],//设置第5个元素为默认排序
+                    /*默认翻页样式设置*/
+                    "sPaginationType": "full_numbers",
+                    /*是否开启主题*/
+                    "bJQueryUI": false,
+
+                    /*语言设置*/
+                    "oLanguage": {
+                        "sLengthMenu": "每页显示 _MENU_条",
+                        "sZeroRecords": "没有找到符合条件的数据",
+                        "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                        "sInfoEmpty": "木有记录",
+                        "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                        "sSearch": "搜索：",
+                        "oPaginate": {
+                            "sFirst": "首页",
+                            "sPrevious": "前一页",
+                            "sNext": "后一页",
+                            "sLast": "尾页"
+                        }
+                    },
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "/web/words/search",
+                        data: data,
+                        "dataType": "json"
+                    },
+                    "aoColumns": [
+                        {"sTitle": "关键词ID", "sClass": "center"},
+                        {"sTitle": "关键词"},
+                        {"sTitle": "获取时间"},
+                        {
+                            "sTitle": "操作",
+                            "sClass": "center",
+                            "mData": function (obj) {
+                                var sReturn = "<a class=\"ibtn\" href=\"#\" onclick=\"add_top_word('" + obj[3] + "');\">置顶</a>";
+                                return sReturn;
+                            }
+                        }
+                    ]
+                }
+        );
+    }
+
+    function refresh_top_words_table() {
+        var key_word = $('#top_key_word').val();
+        var word_type = $('#top_word_type').val();
+        var data = {"top_key_word": key_word, "top_word_type": word_type};
+        // $('#example2').DataTable().destroy();
+        $('#example2').DataTable({
+
+            /*基本参数设置，以下参数设置和默认效果一致*/
+            destroy: true,
+            "bPaginate": true, //翻页功能
+            "bLengthChange": false, //改变每页显示数据数量
+            "bFilter": false, //过滤功能
+            "bSort": false, //排序功能
+            "bInfo": true,//页脚信息
+            "bAutoWidth": true,//自动宽度
+            /*默认排序设置*/
+            "aaSorting": [[2, "desc"]],//设置第5个元素为默认排序
+            /*默认翻页样式设置*/
+            "sPaginationType": "full_numbers",
+            /*是否开启主题*/
+            "bJQueryUI": false,
+            /*语言设置*/
+            "oLanguage": {
+                "sLengthMenu": "每页显示 _MENU_条",
+                "sZeroRecords": "没有找到符合条件的数据",
+                "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                "sInfoEmpty": "木有记录",
+                "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                "sSearch": "搜索：",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                }
+            },
+
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "/web/words/top_search",
+                data: data,
+                "dataType": "json"
+            },
+            "aoColumns": [
+                {"sTitle": "关键词ID", "sClass": "center"},
+                {"sTitle": "关键词"},
+                {"sTitle": "获取时间"}, {"sTitle": "结束时间"},
+                {
+                    "sTitle": "操作",
+                    "sClass": "center",
+                    "mData": function (obj) {
+                        var sReturn = "<a class=\"ibtn\" href=\"#\" onclick=\"add_top_word('" + obj[4] + "');\">重新置顶</a>";
+                        sReturn = sReturn + "<a class=\"ibtn\" href=\"#\" onclick=\"del_top_word('" + obj[4] + "');\">删除</a>";
+                        return sReturn;
+                    }
+                }
+            ]
+        });
+    }
+
+    $(document).ready(function () {
+        $("#usual1 ul").idTabs();
+        $(".select1").uedSelect({
+            width: 345
+        });
+        $(".select2").uedSelect({
+            width: 167
+        });
+        $(".select3").uedSelect({
+            width: 100
+        });
+
+        refresh_words_table();
+    });
+</script>
+
+
+</body>
+</html>
