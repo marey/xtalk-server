@@ -298,7 +298,7 @@ class UserHandler(BaseHandler):
             user.save()
         else:
             # 如果获取token失败了，那么将数据删除
-            User.objects(authen_type=type,login_id=login_id).delete()
+            User.objects(authen_type=type, login_id=login_id).delete()
             raise tornado.web.HTTPError("40003", MessageUtils.ERROR_0003)
 
         self._result = {"user_id": str(user.pk), "token": token}
@@ -1323,7 +1323,7 @@ class GroupCreateHandler(BaseHandler):
             # 然后更新列表
             group_user.update(push__users=word_group)
 
-        self._result = {"group_id": word.id, "group_name": word.word}
+        self._result = {"group_id": word_id, "group_name": p_word, "group_user": word.user_group.group_user_id}
 
 
     def rong_create_group(self, user_id, word_id, p_word):
