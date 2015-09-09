@@ -270,35 +270,36 @@ class UserHandler(BaseHandler):
         pwd = self.get_argument("pwd")
         login_id = utils.md5(param_id)
         user = User.objects(authen_type=type,
-                            login_id=login_id,
-                            user_pwd=pwd).first()
+                            login_id=login_id).first()
 
         if user is not None:
-            raise tornado.web.HTTPError("40006", MessageUtils.ERROR_0006, login_id)
+            raise tornado.web.HTTPError("40006", MessageUtils.ERROR_0006, param_id)
+
+        # 将数据保存到数据库中
+        user = User()
+        user.authen_type = type
+        user.login_id = login_id
+        user.user_name = self.get_argument("name", default=None)
+        # user.user_pwd = utils.md5(self.get_argument("pwd", default=None))
+        user.user_pwd = self.get_argument("pwd")
+        user.user_photo_url = self.get_argument("photo", default=None)
+        user.user_sex = self.get_argument("sex", default=None)
+        user.user_region = self.get_argument("region", default=None)
+        user.user_telephone = param_id
+        user.save()
 
         api_client = ApiClient()
-        response = api_client.user_get_token(login_id, param_name, user_photo_url)
+        response = api_client.user_get_token(str(user.id), param_name, user_photo_url)
 
         code = response.get("code", None)
         if code is not None and code == 200:
             token = response.get("token")
-        else:
-            raise tornado.web.HTTPError("40003", MessageUtils.ERROR_0003)
-
-        if user is None:
-            # 将数据保存到数据库中
-            user = User()
-            user.authen_type = type
-            user.login_id = login_id
-            user.user_name = self.get_argument("name", default=None)
-            # user.user_pwd = utils.md5(self.get_argument("pwd", default=None))
-            user.user_pwd = self.get_argument("pwd")
-            user.user_photo_url = self.get_argument("photo", default=None)
-            user.user_sex = self.get_argument("sex", default=None)
-            user.user_region = self.get_argument("region", default=None)
             user.rong_token = token
-            user.user_telephone = param_id
             user.save()
+        else:
+            # 如果获取token失败了，那么将数据删除
+            User.objects(authen_type=type,login_id=login_id).delete()
+            raise tornado.web.HTTPError("40003", MessageUtils.ERROR_0003)
 
         self._result = {"user_id": str(user.pk), "token": token}
 

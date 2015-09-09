@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>无标题文档</title>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/css/select.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/datatable/media/css/jquery.dataTables.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/static/datatable/media/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/js/select-ui.min.js"></script>
+</head>
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">系统设置</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+
+
+    <div id="usual1" class="usual">
+
+        <div class="itab">
+            <ul>
+                <li><a href="#tab1" class="selected">发布通知</a></li>
+                <li><a href="#tab2">自定义</a></li>
+            </ul>
+        </div>
+
+        <div id="tab1" class="tabson">
+
+            <ul class="seachform">
+
+                <li><label>用户user_id：</label><input id="txtUserId" type="text" class="scinput"/></li>
+
+                <li><label>&nbsp;</label><input name="" type="button" class="scbtn" onclick="btnSearch_click();" value="查询"/></li>
+
+            </ul>
+
+            <div class="formtitle"><span>新闻热点</span></div>
+            <table id="word_table_1" class="tablelist">
+
+            </table>
+
+            <div class="formtitle"><span>影视综艺</span></div>
+            <table id="word_table_2" class="tablelist">
+
+            </table>
+            <div class="formtitle"><span>热门词条</span></div>
+            <table id="word_table_3" class="tablelist">
+
+            </table>
+            <div class="formtitle"><span>新创词条</span></div>
+            <table id="word_table_4" class="tablelist">
+
+            </table>
+
+            <div class="formtitle"><span>状态标签</span></div>
+            <table id="word_table_5" class="tablelist">
+
+            </table>
+
+            <div class="formtitle"><span>我的标签</span></div>
+            <table id="word_table_6" class="tablelist">
+
+            </table>
+        </div>
+
+        <div id="tab2" class="tabson">
+
+            <div class="formtext">用户检索词查询（检索词查询即提交了词条）</div>
+
+            <ul class="forminfo">
+                <li><label>招聘企业<b>*</b></label><input name="" type="text" class="dfinput" value="请填写单位名称"
+                                                      style="width:518px;"/></li>
+
+                <li><label>&nbsp;</label><input name="" type="button" class="btn" value="马上发布"/></li>
+            </ul>
+
+        </div>
+
+
+    </div>
+
+    <script type="text/javascript">
+        $("#usual1 ul").idTabs();
+    </script>
+
+</div>
+
+<script type="text/javascript" charset="utf8" src="/static/datatable/media/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+
+    function btnSearch_click() {
+        var user_id = $('#txtUserId').val();
+        if (user_id.length == 0) {
+            alert("用户user_id不能为空！");
+            return false;
+        }
+        var params = {"user_id": user_id};
+
+        $.ajax({
+            url: "/web/words/add", data: params, success: function (data) {
+                alert(data);
+            }
+        });
+    }
+</script>
+</body>
+</html>
