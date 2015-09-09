@@ -53,3 +53,45 @@ class TestUserSearchHandler(TestCase):
         #word_record = Words.objects(word_id=word_id).first()
 
         #print word_record.user_count
+
+    # 测试两个人加入词条，然后获取词条的用户组
+    def test_two_people_join_group_get_user_list(self):
+        first_user_id = "55eff0deb217c46924f57b70"
+        second_user_id = "55efe49fb217c4686b3558a2"
+        word = "杭州端掉卖淫团伙"
+        data = {"user_id":first_user_id,"word":word}
+        url = 'http://127.0.0.1:8090/group/create?'
+
+        url = url + urlencode(data)
+
+        # jdata = json.dumps(values)
+        request = urllib2.Request(url)
+        request.get_method = lambda: 'GET'
+        request = urllib2.urlopen(request)
+        print request.read()
+
+        data = {"user_id":second_user_id,"word":word}
+        url = 'http://127.0.0.1:8090/group/create?'
+
+        url = url + urlencode(data)
+
+        # jdata = json.dumps(values)
+        request = urllib2.Request(url)
+        request.get_method = lambda: 'GET'
+        request = urllib2.urlopen(request)
+        print request.read()
+
+        import hashlib
+        m = hashlib.md5()
+        m.update(word)
+        group_id =  m.hexdigest()
+        data = {"user_id":second_user_id,"group_id":group_id}
+        url = 'http://127.0.0.1:8090/group/user/list?'
+
+        url = url + urlencode(data)
+
+        # jdata = json.dumps(values)
+        request = urllib2.Request(url)
+        request.get_method = lambda: 'GET'
+        request = urllib2.urlopen(request)
+        print request.read()

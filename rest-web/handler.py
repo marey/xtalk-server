@@ -1323,6 +1323,12 @@ class GroupCreateHandler(BaseHandler):
             word_group.group_user_id = user_id
             # 然后更新列表
             group_user.update(push__users=word_group)
+        else:
+            word_group = WordGroup()
+            word_group.group_user_id = user_id
+
+            GroupUsers.objects(word_id=word_id).update_one(pull__users__group_user_id=user_id)
+            GroupUsers.objects(word_id=word_id).update_one(push__users=word_group)
 
         self._result = {"group_id": word_id, "group_name": p_word, "group_user": word.user_group.group_user_id}
 
@@ -1489,7 +1495,7 @@ class GroupUserListHandler(BaseHandler):
     def get_group_user_list(self):
         user_id = self.get_argument("user_id")
         group_id = self.get_argument("group_id")
-        page_index = int(self.get_argument("user_id", 0))
+        page_index = int(self.get_argument("page_index", 0))
 
         group_user = GroupUsers.objects(word_id=group_id).first()
 
