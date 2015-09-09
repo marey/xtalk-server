@@ -1151,13 +1151,14 @@ class UserOtherHandler(BaseHandler):
         if other_user is None:
             raise tornado.web.HTTPError("40004", MessageUtils.ERROR_0004, user_id)
 
-        result["name"] = user.user_name
-        result["photo"] = user.user_photo_url
-        result["sex"] = user.user_sex
-        result["region"] = user.user_region
-        result["signature"] = user.user_sign
-        result["phone"] = user.user_telephone
-        user_words = user.user_words
+        result["user_id"] = other_user_id
+        result["name"] = other_user.user_name
+        result["photo"] = other_user.user_photo_url
+        result["sex"] = other_user.user_sex
+        result["region"] = other_user.user_region
+        result["signature"] = other_user.user_sign
+        result["phone"] = other_user.user_telephone
+        user_words = other_user.user_words
         if user_words is not None:
             word_list = []
             for word in user_words[:6]:
