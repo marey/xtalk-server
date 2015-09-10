@@ -1,0 +1,2160 @@
+ol,ul{list-style:none;margin:0;padding:0;}
+.clear{clear:both;}
+img{max-width:100%;}
+body {
+	font-family: "SimSun","宋体" ,'Lato', sans-serif;
+	font-size: 100%;
+	line-height: 24px;
+    -webkit-font-smoothing: antialiased;
+    text-decoration: none;
+}
+.header{
+	background:url(../images/bg.jpg);
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10;
+	background-size: cover;
+}
+header {
+	position: relative;
+	width: 100%;
+	height: auto;
+	top: 0;
+	color: #fff;
+	text-align: center;
+	font-size: 19px;
+	line-height: 28px;
+	/*background: rgba(0,0,0,.4);*/
+	background-size: cover;
+}
+#slides > img{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+.logo1 {
+	width: 331px;
+	margin: 0 auto;
+	padding-bottom: 90px;
+	-webkit-animation: moveDown .6s ease-in-out .2s backwards; /*动画的名字 从头播放到尾需要多久Ns 速度由快到慢[这里有好几种速度可选] 延时[什么时候开始播放动画] backwards动画播放之前属于开始状态*/
+	-moz-animation: moveDown .6s ease-in-out .2s backwards; 
+	-ms-animation: moveDown .6s ease-in-out .2s backwards; 
+	-o-animation: moveDown .6s ease-in-out .2s backwards; 
+	animation: moveDown .6s ease-in-out .2s backwards; 
+}
+@-webkit-keyframes moveDown {
+	0%{
+		-webkit-transform: translateY(-80px);
+		opacity: 0;
+	}
+	100%{
+		-webkit-transform: translateY(0);
+		opacity: 1;
+	}
+}
+@-moz-keyframes moveDown {
+	0%{
+		-moz-transform: translateY(-80px);
+		opacity: 0;
+	}
+	100%{
+		-moz-transform: translateY(0);
+		opacity: 1;
+	}
+}
+@-ms-keyframes moveDown {
+	0%{
+		-ms-transform: translateY(-80px);
+		opacity: 0;
+	}
+	100%{
+		-ms-transform: translateY(0);
+		opacity: 1;
+	}
+}
+@-o-keyframes moveDown {
+	0%{
+		-o-transform: translateY(-80px);
+		opacity: 0;
+	}
+	100%{
+		-o-transform: translateY(0);
+		opacity: 1;
+	}
+}
+@keyframes moveDown {
+	0%{
+		transform: translateY(-80px);
+		opacity: 0;
+	}
+	100%{
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+.logo1 > p{
+	font-family: "SimSun","宋体"; 
+}
+/* 搜索框 */
+.form {
+	position: relative;
+	margin: 0 auto;
+	-webkit-animation: moveUp .6s ease-in-out .2s backwards; /*动画的名字 从头播放到尾需要多久Ns 速度由快到慢[这里有好几种速度可选] 延时[什么时候开始播放动画] backwards动画播放之前属于开始状态*/
+	-moz-animation: moveUp .6s ease-in-out .2s backwards; 
+	-ms-animation: moveUp .6s ease-in-out .2s backwards; 
+	-o-animation: moveUp .6s ease-in-out .2s backwards; 
+	animation: moveUp .6s ease-in-out .2s backwards; 
+}
+@-webkit-keyframes moveUp {
+	0%{
+		-webkit-transform: translateY(80px);
+		opacity: 0;
+	}
+	100%{
+		-webkit-transform: translateY(0);
+		opacity: 1;
+	}
+}
+@-moz-keyframes moveUp {
+	0%{
+		-moz-transform: translateY(80px);
+		opacity: 0;
+	}
+	100%{
+		-moz-transform: translateY(0);
+		opacity: 1;
+	}
+}
+@-ms-keyframes moveUp {
+	0%{
+		-ms-transform: translateY(80px);
+		opacity: 0;
+	}
+	100%{
+		-ms-transform: translateY(0);
+		opacity: 1;
+	}
+}
+@-o-keyframes moveUp {
+	0%{
+		-o-transform: translateY(80px);
+		opacity: 0;
+	}
+	100%{
+		-o-transform: translateY(0);
+		opacity: 1;
+	}
+}
+@keyframes moveUp {
+	0%{
+		transform: translateY(80px);
+		opacity: 0;
+	}
+	100%{
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+.form input {
+	display: block;
+	margin: 0 auto;
+	width: 577px;
+	height: 64px;
+	font-size: 24px;
+	line-height: 64px;
+	color: #fff;
+	padding-left: 18px;
+	background: rgba(225,225,225,0);
+	border: 1px solid #fff;
+	outline: none;
+	-webkit-backface-visibility: hidden; /* 当元素不面对屏幕的时候隐藏 */
+	-webkit-transition: all .4s ease-in-out; 
+	-moz-transition: all .4s ease-in-out;
+	-ms-transition: all .4s ease-in-out;
+	-o-transition: all .4s ease-in-out;
+	transition: all .4s ease-in-out; 
+}
+input::input-placeholder {
+	color: #fff;
+}
+input::-webkit-input-placeholder {
+	color: #fff;
+}
+input::-moz-input-placeholder {
+	color: #fff;
+}
+input::-ms-input-placeholder {
+	color: #fff;
+}
+input::-o-input-placeholder {
+	color: #fff;
+}
+.form > a {
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	display: block;
+	width: 132px;
+	height: 62px;
+	background: #fff;
+	color: #4c4b4b;
+	line-height: 60px;
+	font-size: 24px;
+	text-align: center;
+	text-decoration: none;
+	-webkit-backface-visibility: hidden; /* 当元素不面对屏幕的时候隐藏 */
+	-webkit-transition: all .4s ease-in-out; 
+	-moz-transition: all .4s ease-in-out;
+	-ms-transition: all .4s ease-in-out;
+	-o-transition: all .4s ease-in-out;
+	transition: all .4s ease-in-out;
+}
+/* 搜索框 鼠标经过效果 */
+.form:hover input {
+	border: 1px solid rgba(124,197,118,1); 
+}
+.form:hover > a {
+	background: rgba(124,197,118,1);
+	color: #fff;
+	text-shadow : 1px 1px 1px rgba(56,56,56,.2);
+}
+
+.bg_mask {
+	position: relative;
+	width: 95%;
+	height: 100%;
+	top: 20px;
+	left: 0px;
+	z-index: 2;
+	margin: 0 auto;
+	padding: 22% 0 10% 0;
+}
+.wrap {
+	width: 100%;
+	margin: auto;
+}
+
+/* 弹框 */
+.modal-content {
+	width: 480px;
+	margin: 0 auto;
+}
+.modal-content .download-pc,
+.modal-content .download-phone{
+	font-size: 18px;
+	color: #4bda79;
+	font-weight: bold;
+}
+.modal-content .download-pc {
+	position: absolute;
+	top: 36px;
+	left: 50px;
+}
+.modal-content .download-phone {
+	position: absolute;
+	top: 36px;
+	left: 36px;
+}
+.modal-content .buttons-ios {
+	position: relative;
+	display: block;
+	background: rgba(0,0,0,.8);
+	color: #fff;
+	text-decoration: none;
+	margin: 75px 0 10px 36px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+}
+.modal-content .buttons-ios:hover {
+	background: rgba(0,0,0,1);
+}
+.modal-content .buttons-ios .icon {
+	background: url(../images/ios.png) no-repeat center;
+	height: 35px;
+	width: 31px;
+	position: absolute;
+	top: 7px;
+	left: 18px;
+}
+.modal-content .buttons-ios span {
+	display: block;
+	font-size: 20px;
+	padding: 12px;
+}
+.modal-content .buttons-android {
+	position: relative;
+	display: block;
+	background: rgba(120,183,56,.8);
+	color: #fff;
+	text-decoration: none;
+	margin: 0 0 45px 36px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+}
+.modal-content .buttons-android:hover {
+	background: rgba(120,183,56,1);
+}
+.modal-content .buttons-android .icon {
+	background: url(../images/android.png) no-repeat center;
+	height: 37px;
+	width: 32px;
+	position: absolute;
+	top: 8px;
+	left: 18px;
+}
+.modal-content .buttons-android span {
+	display: block;
+	font-size: 20px;
+	padding: 12px;
+}
+.modal-content .qrcode {
+	margin: 85px 0 0 18px;
+}
+.modal-content .download-tips {
+	font-size: 14px;
+	color: #848586;
+	padding: 0 0 10px 34px;
+}
+
+/* start 手机版 APP下载样式*/
+.contact-phone-download .download-buttons {
+	margin: 0 auto;
+	padding-top: 86px;
+}
+.contact-phone-download .download-buttons a{
+	float: left;
+	margin: 0 12px;
+}
+.contact-phone-download .download-pc,
+.contact-phone-download .download-phone{
+	font-size: 18px;
+	color: #4bda79;
+	font-weight: bold;
+}
+.contact-phone-download .download-phone {
+	position: absolute;
+	top: 36px;
+	left: 36px;
+}
+.contact-phone-download .buttons-ios {
+	position: relative;
+	display: block;
+	background: rgba(0,0,0,.8);
+	color: #fff;
+	width: 180px;
+	text-decoration: none;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+}
+.contact-phone-download .buttons-ios:hover {
+	background: rgba(0,0,0,1);
+}
+.contact-phone-download .buttons-ios .icon {
+	background: url(../images/ios.png) no-repeat center;
+	height: 35px;
+	width: 31px;
+	position: absolute;
+	top: 6px;
+	left: 9px;
+	-webkit-background-size: 80%;
+	-moz-background-size: 80%;
+	-ms-background-size: 80%;
+	-o-background-size: 80%;
+	background-size: 80%;
+}
+.contact-phone-download .buttons-ios span,
+.contact-phone-download .buttons-android span {
+	display: block;
+	font-size: 18px;
+	padding: 12px;
+}
+.contact-phone-download .buttons-android {
+	position: relative;
+	display: block;
+	background: rgba(120,183,56,.8);
+	color: #fff;
+	width: 180px;
+	text-decoration: none;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+}
+.contact-phone-download .buttons-android:hover {
+	background: rgba(120,183,56,1);
+}
+.contact-phone-download .buttons-android .icon {
+	background: url(../images/android.png) no-repeat center;
+	height: 37px;
+	width: 32px;
+	position: absolute;
+	top: 6px;
+	left: 9px;
+	-webkit-background-size: 80%;
+	-moz-background-size: 80%;
+	-ms-background-size: 80%;
+	-o-background-size: 80%;
+	background-size: 80%;
+}
+/* end 手机版 APP下载样式*/
+
+.button {
+	padding:45px;
+	text-align: center;
+	display: block;
+	margin: 10% 0% 0% 0%;
+}
+.button img {
+	opacity: 0;
+}
+/**********about****************/
+.about {
+	text-align: center;
+	padding: 8em 10em;
+	background: #f7f7f7;
+}
+.about h2 {
+	color: #303030;
+	font-size: 48px;
+	font-weight: 900;
+}
+.about  span,.services span
+{
+	color:#39A38F;
+}
+.about h4{
+	color: #777;
+	font-size: 20px;
+}
+.about h5{
+	font-size: 18px;
+	color: #222;
+	font-weight: bold;
+	padding: 48px 0 10px 0;
+}
+.about h5 + p{
+	font-size: 14px;
+	color: #737373;
+	width: 190px;
+	margin: 0 auto;
+	padding-bottom: 50px;
+}
+.top-grids {
+	position:relative;
+}
+.about-m4 {
+	margin: 4em 0;
+}
+.top-grid1{
+	margin-top: 2em;
+	padding-top: 2em;
+	position:relative;
+}
+.top-grid1 label{
+	background: #ECECEC;
+	height: 1px;
+	display: block;
+	position: absolute;
+	top: -16px;
+	width: 94%;
+}
+.top-grid{
+	width: 29.9%;
+	height: 430px;
+	float: left;
+	margin-right: 5%;
+	text-align: center;
+	padding-bottom: 3em;
+	background: #fff;
+}
+.top-grids2 {
+	margin: 4em 0;
+}
+.top-grid:nth-child(3),.top-grid:nth-child(6){
+	margin-right:0px;
+	border-right:0;
+}
+.top-grid a.icon,.c_grids a.icon{
+	width: 100%;
+	padding: 0px;
+	text-align: center;
+}
+.top-grid  a{
+	font-size: 1.5em;
+	color: #232323;
+	padding: 0.5em 0 0.6em 0;
+	display: block;
+}
+.contact-left {
+	float:left;
+	width:50%;
+	background: rgba(124,197,118,1);
+}
+.contact-left img {
+	position: relative;
+	top: 52px;
+	left: 15%;
+	padding-top: 80px;
+}
+.address{
+	float:right;
+	width: 40%;
+	margin: 7em 3em 2em 0em;
+	text-align: center;
+}
+.address h1
+{
+	font-size: 40px;
+}
+.address p{
+	color:#979797;
+	font-size: 24px;
+}
+.address h4
+{
+	font-size: 22px;
+}
+.address h4 + p{
+	width: 400px;
+	font-size: 18px;
+	margin: 0 auto;
+	color: #777;
+}
+
+.c_grids
+{
+	width:100%;
+	padding-top: 75px;
+}
+
+.c_grids p{
+	font-size: 1.2em;
+	padding: 0.2em 1em;
+	color: #303030;
+}
+
+#HCloseBtn span {
+	background: url("../images/xbtn.png") no-repeat center;
+	height: 24px;
+	height: 24px;
+	display: block;
+}
+.footer {
+	text-align: center;
+}
+.footer ul {
+	display: inline-block;
+	padding-top: 110px;
+}
+.footer ul li {
+	float: left;
+}
+.footer ul li a {
+	font-size: 30px;
+	color: #222;
+	text-decoration: none;
+}
+.footer ul + p{
+	font-size: 18px;
+	color: #777;
+	padding-bottom: 160px;
+}
+/* start PC版 APP下载样式*/
+.footer-download .download-buttons {
+	width: 428px;
+	margin: 0 auto;
+	padding-top: 86px;
+}
+.footer-download .download-buttons a{
+	float: left;
+	margin: 0 12px;
+}
+.footer-download .download-pc,
+.footer-download .download-phone{
+	font-size: 18px;
+	color: #4bda79;
+	font-weight: bold;
+}
+.footer-download .download-pc {
+	position: absolute;
+	top: 36px;
+	left: 50px;
+}
+.footer-download .download-phone {
+	position: absolute;
+	top: 36px;
+	left: 36px;
+}
+.footer-download .buttons-ios {
+	position: relative;
+	display: block;
+	background: rgba(0,0,0,.8);
+	color: #fff;
+	width: 190px;
+	text-decoration: none;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+}
+.footer-download .buttons-ios:hover {
+	background: rgba(0,0,0,1);
+}
+.footer-download .buttons-ios .icon {
+	background: url(../images/ios.png) no-repeat center;
+	height: 35px;
+	width: 31px;
+	position: absolute;
+	top: 6px;
+	left: 9px;
+	-webkit-background-size: 80%;
+	-moz-background-size: 80%;
+	-ms-background-size: 80%;
+	-o-background-size: 80%;
+	background-size: 80%;
+}
+.footer-download .buttons-ios span {
+	display: block;
+	font-size: 18px;
+	padding: 12px;
+}
+.footer-download .buttons-android {
+	position: relative;
+	display: block;
+	background: rgba(120,183,56,.8);
+	color: #fff;
+	width: 190px;
+	text-decoration: none;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+}
+.footer-download .buttons-android:hover {
+	background: rgba(120,183,56,1);
+}
+.footer-download .buttons-android .icon {
+	background: url(../images/android.png) no-repeat center;
+	height: 37px;
+	width: 32px;
+	position: absolute;
+	top: 6px;
+	left: 9px;
+	-webkit-background-size: 80%;
+	-moz-background-size: 80%;
+	-ms-background-size: 80%;
+	-o-background-size: 80%;
+	background-size: 80%;
+}
+.footer-download .buttons-android span {
+	display: block;
+	font-size: 18px;
+	padding: 12px;
+}
+.footer-download .footer-qrcode .ios-qrcode,
+.android-qrcode {
+	float: left;
+}
+.footer-download .footer-qrcode {
+	position: relative;
+	width: 450px;
+	margin: 0 auto;
+	padding: 40px 0 0 50px;
+}
+.footer-download .ios-qrcode {
+	background: url("../images/ios-qrcode.png") no-repeat center;
+	width: 130px;
+	height: 130px;
+	-webkit-background-size: 98%;
+	-moz-background-size: 98%;
+	-ms-background-size: 98%;
+	-o-background-size: 98%;
+	background-size: 98%;
+}
+.footer-download .android-qrcode {
+	background: url("../images/ios-qrcode.png") no-repeat center;
+	width: 130px;
+	height: 130px;
+	margin-left: 95px;
+	-webkit-background-size: 98%;
+	-moz-background-size: 98%;
+	-ms-background-size: 98%;
+	-o-background-size: 98%;
+	background-size: 98%;
+}
+.footer-download .ios-qrcode span {
+	left: 60px;
+}
+.footer-download .android-qrcode span {
+	right: 56px;
+}
+.footer-download .ios-qrcode span,
+.footer-download .android-qrcode span {
+	position: absolute;
+	bottom: -25px;
+	font-size: 18px;
+	color: #a0a0a0;
+}
+.footer-download .download-tips {
+	font-size: 12px;
+	color: #c6c7c9;
+	padding: 0 0 10px 60px;
+}
+/* end PC版 APP下载样式*/
+.modal-content a #HCloseBtn {
+	background: #000;
+}
+.copy {
+	background: #818282;
+}
+.copy a, .copy p{
+	color:#fff;
+	font-size: 17px;
+	/*line-height: 45px;*/
+	text-decoration: none;
+}
+.copy p a:hover{
+	color:rgba(124,197,118,1);
+	text-decoration: none;
+}
+.copy .copy-pingtu {
+	border-bottom: 1px solid #fff
+}
+@media screen and (max-width: 2560px) 
+{
+	#mysterybtn, .mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	.logo1 {
+	position: relative;
+	width: 315px;
+	padding-right: 90px;
+	}
+	.logo1 > p {
+	position: absolute;
+	top: -140px;
+	right: 50%;
+	font-size: 86px;
+	line-height: 87px;
+	}
+	.contact-phone {
+		display: none;
+	}
+	.form {
+		width: 600px;
+	}
+	.form > a{
+		right: 13px;
+		top: 1px;
+	}
+	.top-grid {
+		height: 830px;
+	}
+	.top-grid img {
+		width: 100%;
+	}
+	.top-grid h5 {
+		font-size: 3em;
+		padding: 78px 0 10px 0;
+	}
+	.top-grid h5 + p{
+		font-size: 1.5em;
+		width: 17em;
+	}
+	.about h2 {
+		font-size: 52px;
+	}
+}
+@media screen and (max-width: 1920px) 
+{
+	.carousel {
+		 margin: 0em;
+	}
+	#mysterybtn, .mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn1{
+		display: block;
+		z-index: 999;
+	}
+	.logo1 {
+	position: relative;
+	width: 315px;
+	padding-right: 90px;
+	}
+	.logo1 > p {
+	position: absolute;
+	top: -120px;
+	right: 50%;
+	font-size: 60px;
+	line-height: 80px;
+	}
+	.contact-phone {
+		display: none;
+	}
+	.form {
+		width: 600px;
+	}
+	.form > a{
+		right: 13px;
+		top: 1px;
+	}
+	.about h2 {
+		font-size: 4em;
+	}
+	.about h4 {
+		font-size: 1.6em;
+	}
+	.top-grid {
+		height: 550px;
+	}
+	.top-grid img {
+		width: 100%;
+	}
+	.top-grid h5 {
+		font-size: 35px;
+	}
+	.top-grid h5 + p{
+		font-size: 20px;
+		width: 15em;
+	}
+ 	.copy p {
+ 		line-height: 45px;
+ 	}
+	
+}
+@media screen and (max-width: 1440px) 
+{
+	.carousel {
+		 margin: 0em;
+	}
+	.bg_mask {
+		position: relative;
+		top: -8px;
+	}
+	header,.header {
+		height: 100px;
+	}
+	#mysterybtn, .mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn1{
+		display: block;
+		z-index: 999;
+	}
+	.logo1 {
+	position: relative;
+	width: 315px;
+	padding-right: 90px;
+	}
+	.logo1 > p {
+	position: absolute;
+	top: -120px;
+	right: 43%;
+	font-size: 86px;
+	line-height: 87px;
+	}
+	.contact-phone {
+		display: none;
+	}
+	.form {
+		width: 600px;
+	}
+	.form > a{
+		right: 12px;
+	}
+	.contact-phone {
+		display: none;
+	}
+	.about h2 {
+		font-size: 48px;
+	}
+	.about h4 {
+		font-size: 20px;
+	}
+	.top-grid {
+		height: 480px;
+	}
+	.top-grid img {
+		width: 100%;
+	}
+	.top-grid h5 {
+		font-size: 2em;
+		padding-top: 52px;
+	}
+	.top-grid h5 + p{
+		font-size: 1.2em;
+		width: 17em;
+	}
+	
+}
+@media screen and (max-width: 1366px)
+{
+	.logo1 {
+	width: 315px;
+	}
+	.mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	.logo1 {
+	width: 300px;
+	}
+	.logo1 > p {
+	position: absolute;
+	right: 50%;
+	font-size: 60px;
+	}
+	.form > a {
+		height: 62px;
+	}
+	.contact-phone {
+		display: none;
+	}
+	.about h2 {
+	font-size: 3em;
+	} 
+}
+@media screen and (max-width: 1280px) 
+{
+	.wrap{
+		width:100%;
+	}
+	.bg_mask {
+		position: relative;
+		top: 75px;
+		padding-top: 175px;
+	}
+	.mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	.logo1 {
+	width: 300px;
+	}
+	.logo1 > p {
+	position: absolute;
+	right: 42%;
+	font-size: 86px;
+	line-height: 87px;
+	}
+	.form > a {
+		height: 62px;
+	}
+	.contact-phone {
+		display: none;
+	}
+	.copy p {
+		line-height: 45px;
+	}
+	.contact-left img {
+		width: 70%;
+	}
+	.about {
+		text-align: center;
+		padding: 8em 1em;
+	}
+	.top-grid a.icon{
+	width: 100%;
+	}
+	.top-grid {
+		height: 490px;
+	}
+	.top-grid img {
+		width: 100%;
+	}
+	.about h2 {
+	font-size: 2.8em;
+	}
+	.about h4 {
+	font-size: 1.7em;
+	}
+	.about h5 {
+	font-size: 2em;
+	padding: 48px 0 10px 0;
+	}
+	.about h5 + p {
+		width: 20em;
+		font-size: 1.2em;
+	}
+	.c_grids {
+		padding-top: 30px;
+	}
+}
+@media screen and (max-width: 1024px),(max-width: 1279px)
+{	
+	.bg_mask {
+		position: relative;
+		top: 91px;
+		padding-top: 90px;
+	}
+	.logo1 {
+	width: 270px;
+	}
+	.mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	.logo1 > p {
+	position: absolute;
+	top: -120px;
+	right: 38%;
+	font-size: 86px;
+	line-height: 87px;
+	}
+	.form > a {
+		height: 64px;
+	}
+	.top-grid {
+		height: 430px;
+	}
+	.contact-left img {
+		width: 70%;
+	}
+	.address {
+		margin-top: 5em;
+	}
+	.c_grids {
+		padding: 0;
+	}
+	.address h1 {
+		font-size: 2.4em;
+	}
+	.address h1 + p{
+		font-size: 1.3em;
+	}
+	.about h2 {
+	font-size: 2.3em;
+	}
+	.about h4 {
+	font-size: 1.3em;
+	}
+	.about h5 + p {
+		font-size: 1em;
+		width: 16em;
+	}
+	.about p {
+	width: 71%;
+	}
+	.sub_grid span {
+	font-size: 2.4em;
+	}
+	.top-grid a {
+	font-size: 1.3em;
+	}
+}
+@media screen and (max-width: 800px),(max-width: 980px) 
+{
+
+	.header_toggle {
+		display: inline-block;
+		z-index: 1000;
+	}
+	.mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	.form > a {
+		height: 62px;
+	}
+	.address h1 {
+		font-size: 2.1em;
+	}
+	.address h1 + p{
+		font-size: 1.2em;
+	}
+	.nav_wrapper.toggled {
+		height: 320px;
+	}
+	.address h4{
+		font-size: 1.3em;
+	}
+	.address h4 + p{
+		width: 270px;
+		font-size: 1em;
+		margin: 0 auto;
+		color: #777;
+	}
+	.about {
+		text-align: center;
+		padding: 8em 1em;
+	}
+	.about h5 {
+		padding: 38px 0 10px 0;
+		font-size: 24px;
+	}
+	.about h5 + p {
+		width: 14em;
+	}
+	.top-grid a.icon{
+		width: 100%;
+	}
+	.top-grid {
+		height: 370px;
+	}
+	.c_grids
+	{
+	width:100%;
+	padding: 0;
+	}
+}
+@media screen and (max-width: 768px), (max-width: 799px) 
+{
+	.wrap{
+		width:100%;
+	}
+	.mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	.form{
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+		height: 50px;
+		font-size: 18px;
+		line-height: 28px;
+	}
+	.form > a {
+		right: 0;
+		height: 48px;
+		width: 102px;
+		font-size: 18px;
+		line-height: 48px;
+	}
+	.contact-left {
+		width: 50%;
+	}
+	.contact-left img {
+		position: relative;
+		top: 40px;
+		padding-top: 0;
+		width: 100%;
+		left: 0;
+	}
+	.address h1 {
+		font-size: 2.4em;
+	}
+	.address h1 + p{
+		font-size: 1.3em;
+	}
+
+	.top-grid {
+	width: 29.9%;
+	padding-bottom: 0em;
+	}
+	.about p {
+	width: 92%;
+	padding: 1em 0em 0.5em 0em;
+	}
+	.about {
+	padding: 3em 0em;
+	}
+	.about h5 {
+		padding: 35px 0 0 0;
+	}
+	.about h5 + p {
+		width: 12em;
+	}
+	.grid1 {
+	width: 46.5%;
+	margin: 6% 0% 0% 6%;
+	}
+	.tool_tip {
+	padding: 3em 0em;
+	}
+	.tool_tip a {
+	padding: 0.6em 2em;
+	}
+	.contact-form {
+	float: none;
+	width: 90%;
+	margin: 2em 1em 2em 3.5em;
+	}
+	.address h1 {
+		font-size: 1.9em;
+	}
+	.address h1 + p{
+		font-size: 1.1em;
+	}
+	.address h4{
+		font-size: 1.3em;
+	}
+	.address h4 + p{
+		width: 270px;
+		font-size: 1em;
+		margin: 0 auto;
+		color: #777;
+	}
+	.address {
+	float:right;
+	width: 40%;
+	margin: 0em 3em 2em 0em;
+	text-align: center;
+	}
+	.c_grids p {
+	font-size: 1em;
+	}
+}
+@media screen and (max-width: 720px) 
+{
+	.form{
+		width: 100%;
+	}
+	.mysterybtn {
+		display: none;
+		z-index: -999;
+	}
+	.form input {
+		width: 100%;
+		height: 50px;
+		font-size: 16px;
+		line-height: 28px;
+	}
+	.form a {
+		width: 100px;
+		right: 1px;
+		margin: 0;
+	}
+	.contact-phone {
+		display: none;
+	}
+}
+@media screen and (max-width: 640px) 
+{
+	.logo1 > p {
+	position: absolute;
+	top: -18px;
+	right: 40%;
+	font-size: 40px;
+	line-height: 40px;
+	}
+	.mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	.mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	.form{
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+		height: 50px;
+		font-size: 16px;
+		line-height: 28px;
+		padding-left: 10px;
+	}
+	.form a {
+		height: 48px;
+		width: 100px;
+		font-size: 13px;
+		line-height: 48px;
+	}
+	.top-grid {
+		height: 340px;
+		width: 85%;
+		margin: 0em 0em 1em 1.7em;
+	}
+	.about h5 {
+		font-size: 1.5em;
+		padding: 28px 0 0 0;
+	}
+	.about h5 + p {
+		width: 12em;
+		font-size: 1em;
+	}
+	.address h1 {
+		font-size: 2.4em;
+	}
+	.address h1 + p{
+		font-size: 1.3em;
+	}
+	.contact-left {
+		width: 100%;
+	}
+	.contact-left img {
+		position: relative;
+		top: 25px;
+		left: 15%;
+		width: 70%;
+		padding: 0; 
+	}
+	header h1 {
+	font-size: 17px;
+	}
+	header p {
+	font-size: 0.9em;
+	margin: 0% auto 3% auto;
+	}
+	.button {
+	margin: 2% 0% 0% 0%;
+	}
+	.slider2 p {
+	font-size: 1em;
+	}
+	.services {
+	padding-bottom: 2.7em;
+	}
+	.contact-form {
+	width: 85%;
+	padding-top: 1em;
+	}
+	.address {
+	width: 100%;
+	margin: 0;
+	padding: 3em 1em;
+	}
+
+	.header_toggle {
+	right: 29px;
+	}
+}
+@media screen and (max-width: 540px),(max-width: 639px) 
+{
+	.top-grids2 {
+		margin: 0em 0;
+	}
+	header,.header {
+		height: 100%;
+	}
+	#mysterybtn1, .mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn, .mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	.form {
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+	}
+	.form a {
+		width: 95px;
+		right: 0;
+		margin: 0;
+	}
+/*	.contact-phone-download .download-buttons {
+		width: 500px;
+	}*/
+	.contact-phone-download .buttons-android {
+		width: 215px;
+	}
+	.contact-phone-download .buttons-ios {
+		width: 215px;
+	}
+	.contact-phone-download .buttons-android .icon {
+		background: url(../images/android.png) no-repeat center;
+		height: 37px;
+		width: 32px;
+		position: absolute;
+		top: 9px;
+		left: 20px;
+	}
+	.contact-phone-download .buttons-ios .icon {
+		background: url(../images/ios.png) no-repeat center;
+		height: 35px;
+		width: 31px;
+		position: absolute;
+		top: 9px;
+		left: 20px;
+	}
+	.contact-phone-download .buttons-ios span,
+	.contact-phone-download .buttons-android span {
+		display: block;
+		font-size: 24px;
+		padding: 12px;
+	}
+	.contact-phone {
+		display: block;
+	}
+	.copy p {
+		font-size: 16px;
+		line-height: 30px;
+	}
+	.footer-download {
+		display: none;
+	}
+	.about h2 {
+		font-size: 3.8em;
+	}
+	.about h4 {
+		font-size: 1.6em;
+	}
+	.top-grid {
+	width: 85%;
+	height: 580px;
+	margin: 0em 0em 1em 2.7em;
+	}
+	.top-grid img {
+		width: 100%;
+	}
+	.about h4 {
+	font-size: 1em;
+	}
+	.about h5 {
+		font-size: 2em;
+		padding: 30px 0 10px 0;
+	}
+	.about h5 + p {
+		font-size: 1.3em;
+		width: 18em;
+	}
+	.about p {
+	width: 100%;
+	padding: 0em 0em 0.5em 0em;
+	}
+	.para_a
+	{
+		font-size: 1.1em;
+	}
+	.grid_of_1:nth-child(3) {
+	display: none;
+	}
+	.grid_of_1 {
+	width: 39%;
+	margin-left: 20%;
+	}
+	.clients h3 {
+	font-size: 1.4em;
+	}
+	.grid1 {
+	float: none;
+	width: 100%;
+	margin: 0%;
+	margin-top: 2em;
+	}
+}
+@media screen and (max-width: 480px) 
+{
+	.about h2 {
+	font-size: 2.8em;
+	}
+	header,.header {
+		height: 100%;
+	}
+	#mysterybtn1, .mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn, .mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	.header_toggle {
+		right: 0px;
+		padding: 1.5em 1em;
+	}
+	.form {
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+	}
+	.form a {
+		width: 100px;
+		right: 0;
+		margin: 0;
+	}
+	.top-grids2 {
+		margin: 0em 0;
+	}
+	.top-grid {
+	width: 85%;
+	height: 440px;
+	margin: 0em 0em 1em 1.7em;
+	}
+	.top-grid img {
+		width: 100%;
+	}
+
+	.contact-phone-download .download-buttons {
+		padding-top: 75px;
+	}
+	.contact-phone {
+		display: block;
+	}
+	.contact-phone-download .buttons-android {
+		width: 215px;
+	}
+	.contact-phone-download .buttons-ios {
+		width: 215px;
+	}
+	.contact-phone-download .buttons-android .icon {
+		background: url(../images/android.png) no-repeat center;
+		height: 37px;
+		width: 32px;
+	}
+	.contact-phone-download .buttons-ios .icon {
+		background: url(../images/ios.png) no-repeat center;
+		height: 35px;
+		width: 31px;
+	}
+	.contact-phone-download .buttons-android .icon,
+	.contact-phone-download .buttons-ios .icon {
+		top: 8px;
+		left: 16px;
+		position: absolute;
+		-webkit-background-size: 88%;
+		-moz-background-size: 88%;
+		-ms-background-size: 88%;
+		-o-background-size: 88%;
+		background-size: 88%;
+	}
+	.contact-phone-download .buttons-ios span,
+	.contact-phone-download .buttons-android span {
+		display: block;
+		font-size: 22px;
+		padding: 12px;
+	}
+	.about h4 {
+	font-size: 1em;
+	}
+	.about h5 {
+		font-size: 2em;
+		padding: 30px 0 10px 0;
+	}
+	.about h5 + p {
+		font-size: 1.2em;
+		width: 18em;
+	}
+	.about p {
+	width: 100%;
+	padding: 0em 0em 0.5em 0em;
+	}
+	.para_a
+	{
+		font-size: 1.1em;
+	}
+	.grid_of_1:nth-child(3) {
+	display: none;
+	}
+	.grid_of_1 {
+	width: 39%;
+	margin-left: 20%;
+	}
+	.clients h3 {
+	font-size: 1.4em;
+	}
+	.grid1 {
+	float: none;
+	width: 100%;
+	margin: 0%;
+	margin-top: 2em;
+	}
+	.footer ul li a {
+		font-size: 24px;
+	}
+	.service_grids .grid_sub {
+	width: 80%;
+	margin-left: 2%;
+	}
+	.c_grids {
+	width: 100%;
+	padding-top: 30px;
+	}
+	.address {
+	width: 100%;
+	margin: 0;
+	padding: 3em 1em;
+	}
+	.address h1 {
+		font-size: 1.9em;
+	}
+	.address h4 {
+		font-size: 20px;
+	}
+	.logo1 {
+	width: 180px;
+	}
+	.modal-content .download-pc {
+		position: absolute;
+		top: 25px;
+		left: 35px;
+	}
+	.modal-content .buttons-ios {
+		margin: 65px 20px 5px 20px;
+	}
+	.modal-content .buttons-ios .icon {
+		position: absolute;
+		top: 14px;
+		left: 33px;
+	}
+	.modal-content .buttons-ios span,
+	.modal-content .buttons-android span {
+		padding: 15px 30px;
+	}
+	.modal-content .buttons-android {
+		margin: 0 20px 10px 20px;
+	}
+	.modal-content .buttons-android .icon {
+		position: absolute;
+		top: 10px;
+		left: 33px;
+	}
+	.modal-content .download-phone {
+		top: 18px;
+	}
+	.modal-content .qrcode {
+		margin: 60px 0 0 60px;
+	}
+	.modal-content .download-tips {
+		padding: 15px 0 5px 35px;
+	}
+	.modal-content .buttons-ios span,
+	.modal-content .buttons-android span {
+		font-size: 25px;
+	}
+}
+@media screen and (max-width: 414px),(max-width: 424px),(max-width: 479px)
+{
+	.bg_mask {
+		position: relative;
+		top: 35px;
+		padding: 6% 0 0 0;
+	}
+	header,.header {
+		height: 100%;
+	}
+	#mysterybtn1, .mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn, .mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	.contact-phone-download .buttons-android,
+	.contact-phone-download .buttons-ios {
+		width: 182px;
+	}
+	.form {
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+	}
+	.form a {
+		width: 110px;
+		right: 1px;
+		margin: 0;
+		font-size: 16px;
+	}
+	.about h5 {
+		font-size: 22px;
+	}
+	.about h5 + p {
+		width: 14em;
+		font-size: 14px;
+	}
+	.footer-download {
+		display: none;
+	}
+	.contact-phone-download .buttons-android .icon {
+		background: url(../images/android.png) no-repeat center;
+		height: 37px;
+		width: 32px;
+	}
+	.contact-phone-download .buttons-ios .icon {
+		background: url(../images/ios.png) no-repeat center;
+		height: 35px;
+		width: 31px;
+	}
+	.contact-phone-download .buttons-android .icon,
+	.contact-phone-download .buttons-ios .icon {
+		top: 4px;
+		left: 16px;
+		position: absolute;
+		-webkit-background-size: 78%;
+		-moz-background-size: 78%;
+		-ms-background-size: 78%;
+		-o-background-size: 78%;
+		background-size: 78%;
+	}
+	.contact-phone-download .buttons-ios span,
+	.contact-phone-download .buttons-android span {
+		display: block;
+		font-size: 18px;
+		padding: 12px;
+	}
+	#HBox {
+		display: none;
+	}
+}
+@media screen and (max-width: 400px),(max-width: 413px)
+{
+	.form a {
+		width: 95px;
+		right: 1px;
+		margin: 0;
+	}
+	header,.header {
+		height: 100%;
+	}
+	#mysterybtn1, .mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn, .mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	.contact-phone-download .download-buttons {
+		padding-top: 75px;
+	}
+	.contact-phone {
+		display: block;
+	}
+	.contact-phone-download .buttons-android {
+		width: 175px;
+	}
+	.contact-phone-download .buttons-ios {
+		width: 175px;
+	}
+	.contact-phone-download .buttons-android .icon {
+		background: url(../images/android.png) no-repeat center;
+		height: 37px;
+		width: 32px;
+	}
+	.contact-phone-download .buttons-ios .icon {
+		background: url(../images/ios.png) no-repeat center;
+		height: 35px;
+		width: 31px;
+	}
+	.contact-phone-download .buttons-android .icon,
+	.contact-phone-download .buttons-ios .icon {
+		top: 4px;
+		left: 16px;
+		position: absolute;
+		-webkit-background-size: 78%;
+		-moz-background-size: 78%;
+		-ms-background-size: 78%;
+		-o-background-size: 78%;
+		background-size: 78%;
+	}
+	.contact-phone-download .buttons-ios span,
+	.contact-phone-download .buttons-android span {
+		display: block;
+		font-size: 16px;
+		padding: 12px;
+	}
+}
+@media screen and (max-width: 384px),(max-width: 399px)
+{	
+	.mysterybtn1 {
+		display: none;
+	}
+	#mysterybtn1, .mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn, .mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	header,.header {
+		height: 100%;
+	}
+	.form {
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+	}
+	.form a {
+		width: 95px;
+		right: 0;
+		margin: 0;
+	}
+	.contact-phone-download .buttons-android {
+		width: 167px;
+	}
+	.contact-phone-download .buttons-ios {
+		width: 167px;
+	}
+}
+@media screen and (max-width: 375px)
+{	
+	.bg_mask {
+		position: relative;
+		top: 45px;
+	}
+	#mysterybtn1, .mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn, .mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	header,.header {
+		height: 100%;
+	}
+	.form {
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+	}
+	.form a {
+		width: 95px;
+		right: 0;
+		margin: 0;
+	}
+	.contact-phone-download .buttons-android {
+		width: 162px;
+	}
+	.contact-phone-download .buttons-ios {
+		width: 162px;
+	}
+	.copy p {
+		font-size: 15px;
+		height: 45px;
+	}
+}
+
+@media screen and (max-width: 360px),(max-width: 374px) 
+{	
+	#mysterybtn1, .mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn, .mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	header,.header {
+		height: 100%;
+	}
+	.about h5 {
+		font-size: 20px;
+	}
+	.about h5 + p {
+		width: 16em;
+		font-size: 14px;
+	}
+	.form {
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+	}
+	.form a {
+		width: 95px;
+		right: 0;
+		margin: 0;
+	}
+	.contact-phone {
+		display: block;
+	}
+	.contact-phone-download .buttons-android {
+		width: 155px;
+	}
+	.contact-phone-download .buttons-ios {
+		width: 155px;
+	}
+	.contact-phone-download .buttons-android .icon {
+		background: url(../images/android.png) no-repeat center;
+		height: 37px;
+		width: 32px;
+		position: absolute;
+		top: 2px;
+		left: 6px;
+		-webkit-background-size: 68%;
+		-moz-background-size: 68%;
+		-ms-background-size: 68%;
+		-o-background-size: 68%;
+		background-size: 68%;
+	}
+	.contact-phone-download .buttons-ios .icon {
+		background: url(../images/ios.png) no-repeat center;
+		height: 35px;
+		width: 31px;
+		position: absolute;
+		top: 2px;
+		left: 6px;
+		-webkit-background-size: 68%;
+		-moz-background-size: 68%;
+		-ms-background-size: 68%;
+		-o-background-size: 68%;
+		background-size: 68%;
+	}
+	.contact-phone-download .buttons-ios span,
+	.contact-phone-download .buttons-android span {
+	display: block;
+	font-size: 16px;
+	padding: 10px;
+	}
+	.copy {
+		background: #818282;
+	}
+	.copy p {
+		font-size: 14px;
+		line-height: 23px;
+	}
+
+}
+@media screen and (max-width: 320px),(max-width: 359px)
+{	
+	.bg_mask {
+		position: relative;
+		top: 15px;
+		padding-top: 35px;
+	}
+	#mysterybtn1, .mysterybtn1 {
+		display: none;
+		z-index: -999;
+	}
+	#mysterybtn, .mysterybtn {
+		display: block;
+		z-index: 999;
+	}
+	.header_toggle {
+	right: 0px;
+	padding: 1.5em 1em;
+	top: -5px;
+	}
+	.logo1 {
+	position: relative;
+	width: 150px;
+	}
+	.logo1 > p {
+	position: absolute;
+	top: -18px;
+	right: 35%;
+	font-size: 40px;
+	line-height: 40px;
+	}
+	.form{
+		width: 100%;
+	}
+	.form input {
+		width: 100%;
+		height: 40px;
+		font-size: 12px;
+		line-height: 28px;
+		padding-left: 10px;
+	}
+	.form a {
+		right: 1px;
+		height: 38px;
+		width: 80px;
+		font-size: 13px;
+		line-height: 38px;
+	}
+	header,.header {
+		height: 100%;
+	}
+	header h1 {
+	font-size: 12px;
+	line-height: 20px;
+	margin-top: 1em;
+	}
+	header p {
+	font-size: 0.7em;
+	margin: 2% auto 3% auto;
+	line-height: 20px;
+	}
+	header h6 {
+	width: 100px;
+	}
+	.button {
+	padding: 10px 125px;
+	}
+	.navigation li a {
+	padding: 0.4em 1em;
+	font-size: 0.8em;
+	}
+	.logo {
+	padding: 1.1em 0em;
+	}
+	.about h2 {
+	font-size: 2.8em;
+	}
+	.about {
+	padding: 2em 0em;
+	}
+	.about h4 {
+	font-size: 1em;
+	padding: 0.5em 0em;
+	}
+	.about h5 {
+		font-size: 20px;
+	}
+	.about h5 + p {
+		width: 14em;
+		font-size: 14px;
+	}
+	.para_a {
+	font-size: 1em;
+	}
+	.grid_of_1 a {
+	float: none;
+	}
+	.grid_of_1 .sub_grid {
+	float: none;
+	margin-top: 1em;
+	}
+	.service_grids .grid_sub {
+	width: 70%;
+	margin-left: 2%;
+	}
+	.grid_sub h3 {
+	font-size: 1.1em;
+	}
+	.team_members:before {
+	right: 37.5%;
+	}
+	.contact-form {
+	width: 88%;
+	padding: 1em 1.2em;
+	margin: 0px;
+	}
+	.address {
+	width: 100%;
+	margin: 0;
+	padding: 3em 1em;
+	}
+	.address h1 {
+		font-size: 1.9em;
+	}
+	.address h1 + p {
+		font-size: 1.1em;
+	}
+	.c_grids {
+	width: 100%;
+	}
+	.slider2 h4 {
+	font-size: 1em;
+	}
+	.top-grid a {
+	font-size: 1.3em;
+	padding: 0.5em 0 0em 0;
+	}
+	.top-grid {
+	width: 85%;
+	height: 390px;
+	margin: 0em 0em 1em 1.7em;
+	}
+	.footer ul li a {
+		font-size: 22px;
+	}
+	.c_grids p {
+	font-size: 0.8em;
+	}
+	.footer-left {
+	float: none;
+	padding: 1em 0em 0em 0em;
+	text-align: center;
+	}
+	.social_icons {
+	padding: 1em 4em;
+	float: none;
+	}
+	.footer {
+	padding-bottom: 1em;
+	}
+	.address h3 {
+	font-size: 1.1em;
+	}
+	.contact-phone-download .download-buttons {
+		padding-top: 65px;
+	}
+	.contact-member {
+	display: none;
+	}
+	.contact-phone-download .buttons-android {
+		width: 136px;
+	}
+	.contact-phone-download .buttons-ios {
+		width: 136px;
+	}
+	.contact-phone-download .buttons-android .icon {
+		background: url(../images/android.png) no-repeat center;
+		height: 37px;
+		width: 32px;
+		position: absolute;
+		top: 2px;
+		left: 1px;
+		-webkit-background-size: 68%;
+		-moz-background-size: 68%;
+		-ms-background-size: 68%;
+		-o-background-size: 68%;
+		background-size: 68%;
+	}
+	.contact-phone-download .buttons-ios .icon {
+		background: url(../images/ios.png) no-repeat center;
+		height: 35px;
+		width: 31px;
+		position: absolute;
+		top: 2px;
+		left: 1px;
+		-webkit-background-size: 68%;
+		-moz-background-size: 68%;
+		-ms-background-size: 68%;
+		-o-background-size: 68%;
+		background-size: 68%;
+	}
+	.contact-phone-download .buttons-ios span,
+	.contact-phone-download .buttons-android span {
+	display: block;
+	font-size: 14px;
+	padding: 10px;
+	}
+	.modal-content .download-pc {
+		position: absolute;
+		top: 25px;
+		left: 35px;
+	}
+	.modal-content .buttons-ios {
+		margin: 65px 20px 5px 20px;
+	}
+	.modal-content .buttons-ios .icon,
+	.modal-content .buttons-android .icon {
+		position: absolute;
+		top: 10px;
+		left: 13px;
+	}
+	.modal-content .buttons-ios span,
+	.modal-content .buttons-android span {
+		padding: 15px;
+	}
+	.modal-content .buttons-android {
+		margin: 0 20px 10px 20px;
+	}
+	.modal-content .download-phone {
+		top: 18px;
+	}
+	.modal-content .qrcode {
+		margin: 60px 0 0 60px;
+	}
+	.modal-content .download-tips {
+		padding: 15px 0 5px 4px;
+	}
+}
