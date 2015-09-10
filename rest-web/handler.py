@@ -13,7 +13,7 @@ from rong import *
 
 class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
-        connect('project1', host='mongodb://182.92.78.106:27017/test')
+        connect('project1', host='mongodb://127.0.0.1:27017/test')
         self._response = {"code": "200", "message": "", "result": ""}
         self._result = None
 
