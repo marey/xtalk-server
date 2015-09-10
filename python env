@@ -3,6 +3,9 @@ sudo apt-get install build-essential python-dev libxml2-dev libxslt1-dev
 sudo apt-get build-dep python-lxml
 sudo apt-get install libffi-dev
 sudo apt-get install libssl-dev
+
+aptitude install mongodb
+aptitude install python-dev build-essential libxml2-dev libxslt1-dev libffi-dev build-dep python-lxml python-pip git
 pip install scrapy
 pip install twisted
 pip install lxml
