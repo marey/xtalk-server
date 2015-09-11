@@ -852,7 +852,7 @@ input::-o-input-placeholder {
 		top: -8px;
 	}
 	header,.header {
-		height: 100px;
+		height: 100%;
 	}
 	#mysterybtn, .mysterybtn {
 		display: none;
