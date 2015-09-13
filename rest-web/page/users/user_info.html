@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>用户管理-用户列表</title>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/datatable/media/css/jquery.dataTables.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/static/datatable/media/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/js/select-ui.min.js"></script>
+    <link href="/static/css/select.css" rel="stylesheet" type="text/css"/>
+</head>
+
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">用户管理</a></li>
+        <li><a href="#">用户列表</a></li>
+    </ul>
+</div>
+<div class="mainindex">
+
+    <input id="use_id" type="text" class="scinput" value="{{user_id}}" style="display:none;"/>
+    <div id="usual1" class="usual">
+
+        <div class="itab">
+            <ul>
+                <li><a href="#tab1" class="selected">主要信息</a></li>
+                <li><a href="#tab2" onclick="refresh_user_table();" >用户词条</a></li>
+            </ul>
+        </div>
+
+        <div id="tab1" class="tabson">
+            <ul class="seachform">
+
+                <li><label>用户类型：</label><input type="text" class="scinput" value="{{authen_type}}"/>
+                </li>
+                <li><label>用户名称：</label><input type="text" class="scinput" value="{{user_name}}"/>
+                </li>
+                <li><label>用户头像：</label><img height="60px" width="60px" src="{{user_photo_url}}"/>
+                </li>
+                <li><label>用户性别：</label><input type="text" class="scinput" value="{{user_sex}}"/>
+                </li>
+                <li><label>用户生日：</label><input type="text" class="scinput" value="{{user_birthday}}"/>
+                </li>
+                <li><label>所在省份：</label><input type="text" class="scinput" value="{{user_region}}"/>
+                </li>
+                <li><label>用户签名：</label><input type="text" class="scinput" value="{{user_sign}}"/>
+                </li>
+                <li><label>所在电话：</label><input type="text" class="scinput" value="{{user_telephone}}"/>
+                </li>
+                <li><label>融云token：</label><input type="text" class="scinput" value="{{rong_token}}"/>
+                </li>
+                <li><label>创建时间：</label><input type="text" class="scinput" value="{{created}}"/>
+                </li>
+            </ul>
+        </div>
+
+
+        <div id="tab2" class="tabson">
+            <table id="example" class="display" cellspacing="0" width="100%">
+            </table>
+        </div>
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript" charset="utf8" src="/static/datatable/media/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+
+    function refresh_user_table() {
+        var user_id = $('#use_id').val();
+        var data = {"user_id": user_id};
+
+        $('#example').dataTable({
+                    /*基本参数设置，以下参数设置和默认效果一致*/
+                    destroy: true,
+                    "bPaginate": true, //翻页功能
+                    "bLengthChange": false, //改变每页显示数据数量
+                    "bFilter": false, //过滤功能
+                    "bSort": false, //排序功能
+                    "bInfo": true,//页脚信息
+                    "bAutoWidth": true,//自动宽度
+                    /*默认排序设置*/
+                    // "aaSorting": [[2, "desc"]],//设置第5个元素为默认排序
+                    /*默认翻页样式设置*/
+                    "sPaginationType": "full_numbers",
+                    /*是否开启主题*/
+                    "bJQueryUI": false,
+
+                    /*语言设置*/
+                    "oLanguage": {
+                        "sLengthMenu": "每页显示 _MENU_条",
+                        "sZeroRecords": "没有找到符合条件的数据",
+                        "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                        "sInfoEmpty": "木有记录",
+                        "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                        "sSearch": "搜索：",
+                        "oPaginate": {
+                            "sFirst": "首页",
+                            "sPrevious": "前一页",
+                            "sNext": "后一页",
+                            "sLast": "尾页"
+                        }
+                    },
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "/web/user/info/word/get",
+                        data: data,
+                        "dataType": "json"
+                    },
+                    "aoColumns": [
+                        {"sTitle": "词条ID"},
+                        {"sTitle": "词条名称"},
+                        {"sTitle": "加入该词条的时间"},
+                        {"sTitle": "加入词条的总人数"},
+                        {"sTitle": "当前词条在线人数"},
+                        {"sTitle": "词条的创建时间"},
+                    ]
+                }
+        );
+    }
+
+    $(document).ready(function () {
+        $("#usual1 ul").idTabs();
+        $(".select1").uedSelect({
+            width: 345
+        });
+        $(".select2").uedSelect({
+            width: 167
+        });
+        $(".select3").uedSelect({
+            width: 100
+        });
+    });
+</script>
+
+
+</body>
+</html>

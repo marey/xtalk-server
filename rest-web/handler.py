@@ -4,6 +4,7 @@ __author__ = 'murui'
 
 import tornado.web
 from bson.objectid import ObjectId
+from qiniu import Auth
 
 from message import MessageUtils
 from model import *
@@ -50,6 +51,34 @@ class BaseHandler(tornado.web.RequestHandler):
                 response_result["message"] = MessageUtils.ERROR_0015.format(exec_info[1])
 
             self.write(response_result)
+
+    def get_sys_setting(self):
+        setting = SysSetting.objects().first()
+        access_key = "Wo12qvNKGclXn5eOx3kl4ISTCyfgkWePWH580TCB"
+        secret_key = "9q1wlfzLJX7yOpFSnqr1TQK7PytY7qlgdRuTg6TI"
+        bucket_name = "xtalk"
+        expires = 3600 * 24 * 7
+
+        if setting is None:
+            q = Auth(access_key, secret_key)
+            token = q.upload_token(bucket_name, expires=expires)
+            setting = SysSetting()
+            setting.qiniu_token = token
+            setting.qiniu_token_expires_time = datetime.datetime.now() + datetime.timedelta(seconds=expires)
+            setting.save()
+        elif setting.qiniu_token is None or len(setting.qiniu_token) == 0:
+            q = Auth(access_key, secret_key)
+            token = q.upload_token(bucket_name, expires=expires)
+            setting.qiniu_token = token
+            setting.qiniu_token_expires_time = datetime.datetime.now() + datetime.timedelta(seconds=expires)
+            setting.save()
+        elif datetime.datetime.now() >= setting.qiniu_token_expires_time:
+            q = Auth(access_key, secret_key)
+            token = q.upload_token(bucket_name, expires=expires)
+            setting.qiniu_token = token
+            setting.qiniu_token_expires_time = datetime.datetime.now() + datetime.timedelta(seconds=expires)
+            setting.save()
+        return setting
 
 
 class UserLoginHandler(BaseHandler):
@@ -98,6 +127,8 @@ class UserLoginHandler(BaseHandler):
             result["signature"] = user.user_sign
             result["phone"] = user.user_telephone
             result["token"] = user.rong_token
+            setting = self.get_sys_setting()
+            result["qiniu_token"] = setting.qiniu_token
             # user_words = user.user_words
             # if user_words is not None:
             # word_list = []
@@ -105,7 +136,6 @@ class UserLoginHandler(BaseHandler):
             # word_list.append(word.word)
             #
             # reslut["user_words"] = word_list
-
             self._result = result
 
 
@@ -1508,3 +1538,21 @@ class GroupUserListHandler(BaseHandler):
 
             if len(user_list) > 0:
                 self._result = user_list
+
+class SysSettingHandler(BaseHandler):
+    def get(self):
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            setting = self.get_sys_setting()
+
+            result = {}
+            result["main_back_img"] = setting.main_back_img
+            result["qiniu_token"] = setting.qiniu_token
+            self._result = result
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()

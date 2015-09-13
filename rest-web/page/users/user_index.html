@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>用户管理-用户列表</title>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/datatable/media/css/jquery.dataTables.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/static/datatable/media/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/js/select-ui.min.js"></script>
+    <link href="/static/css/select.css" rel="stylesheet" type="text/css"/>
+</head>
+
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">用户管理</a></li>
+        <li><a href="#">用户列表</a></li>
+    </ul>
+</div>
+<div class="mainindex">
+
+
+    <div id="usual1" class="usual">
+
+        <div class="itab">
+            <ul>
+                <li><a href="#tab1" class="selected" onclick="refresh_user_table();">用户列表</a></li>
+                <li><a href="#tab2">用户注册</a></li>
+            </ul>
+        </div>
+
+        <div id="tab1" class="tabson">
+            <ul class="seachform">
+
+                <li><label>用户id</label><input id="use_id" type="text" class="scinput" value=""/>
+                </li>
+                <li><label>用户名称</label><input id="use_name" type="text" class="scinput" value=""/>
+                </li>
+                <li><label>&nbsp;</label><input name="" type="button" class="scbtn" onclick="btnSearch_click()"
+                                                value="查询"/></li>
+            </ul>
+
+            <table id="example" class="display" cellspacing="0" width="100%">
+            </table>
+        </div>
+
+
+        <div id="tab2" class="tabson">
+
+            <ul class="forminfo">
+                <li><label>手机号码：<b>*</b></label><input id="txt_new_user_phone" type="text" class="dfinput" value=""
+                                                       style="width:518px;"/></li>
+                <li><label>用户名称：<b>*</b></label><input id="txt_new_user_name" type="text" class="dfinput" value=""
+                                                       style="width:518px;"/></li>
+
+                <li><label>用户密码：<b>*</b></label><input id="txt_new_user_pwd" type="text" class="dfinput" value=""
+                                                       style="width:518px;"/></li>
+                <li><label>头像地址：<b>*</b></label><input id="txt_new_user_photo" type="text" class="dfinput" value=""
+                                                       style="width:518px;"/></li>
+                <li><label>用户性别：<b>*</b></label>
+                    <div class="vocation">
+                        <select id="slt_new_user_sex" class="select3">
+                            <option value="1">男</option>
+                            <option value="2">女</option>
+                        </select>
+                    </div>
+                </li>
+                <li><label>&nbsp;</label><input name="" type="button" class="btn" onclick="btnNewWord_click()"
+                                                value="马上添加"/></li>
+            </ul>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript" charset="utf8" src="/static/datatable/media/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+
+
+    function btnSearch_click() {
+        refresh_user_table();
+    }
+
+    function add_new_user_click() {
+        var id = $('#txt_new_user_phone').val();
+        if (id.length == 0){
+            alert("用户号码不能为空！");
+            return false;
+        }
+        var pwd = $('#txt_new_user_pwd').val();
+        if (pwd.length == 0){
+            alert("用户密码不能为空！");
+            return false;
+        }
+        var name = $('#txt_new_user_name').val();
+        if (name.length == 0){
+            alert("用户名称不能为空！");
+            return false;
+        }
+        var photo = $('#txt_new_user_photo').val();
+        if (photo.length == 0){
+            alert("用户头像不能为空！");
+            return false;
+        }
+        var sex = $('#slt_new_user_sex').val();
+        var params = {"id": id, "pwd": pwd,"name":name,"photo":photo,"sex":sex};
+        $.ajax({
+            url: "/web/words/top/add",type: 'POST', data: params, success: function (data) {
+                alert("置顶成功！");
+            }
+        });
+    }
+
+    function del_top_word(id) {
+
+        $.ajax({
+            url: "/web/words/top/del", data: {'id': id}, success: function (data) {
+                refresh_top_words_table();
+                alert("删除成功！");
+            }
+        });
+    }
+
+    function refresh_user_table() {
+        var use_id = $('#use_id').val();
+        var use_name = $('#use_name').val();
+        var data = {"use_id": use_id, "use_name": use_name};
+
+        $('#example').dataTable({
+                    /*基本参数设置，以下参数设置和默认效果一致*/
+                    destroy: true,
+                    "bPaginate": true, //翻页功能
+                    "bLengthChange": false, //改变每页显示数据数量
+                    "bFilter": false, //过滤功能
+                    "bSort": false, //排序功能
+                    "bInfo": true,//页脚信息
+                    "bAutoWidth": true,//自动宽度
+                    /*默认排序设置*/
+                    // "aaSorting": [[2, "desc"]],//设置第5个元素为默认排序
+                    /*默认翻页样式设置*/
+                    "sPaginationType": "full_numbers",
+                    /*是否开启主题*/
+                    "bJQueryUI": false,
+
+                    /*语言设置*/
+                    "oLanguage": {
+                        "sLengthMenu": "每页显示 _MENU_条",
+                        "sZeroRecords": "没有找到符合条件的数据",
+                        "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                        "sInfoEmpty": "木有记录",
+                        "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                        "sSearch": "搜索：",
+                        "oPaginate": {
+                            "sFirst": "首页",
+                            "sPrevious": "前一页",
+                            "sNext": "后一页",
+                            "sLast": "尾页"
+                        }
+                    },
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "/web/user/list",
+                        data: data,
+                        "dataType": "json"
+                    },
+                    "aoColumns": [
+                        {
+                            "sTitle": "用户头像",
+                            "sClass": "center",
+                            "mData": function (obj) {
+                                var sReturn = "<img height='60' width='60'  src='" + obj[0] + "'/>";
+                                return sReturn;
+                            }
+                        },
+                        {
+                            "sTitle": "用户ID",
+                            "sClass": "center",
+                            "mData": function (obj) {
+                                var sReturn = "<a target=\"rightFrame\" href=\"/web/user/info/index?user_id=" + obj[1] +"\" >" + obj[1] + "</a>";
+                                return sReturn;
+                            }
+                        },
+                        {"sTitle": "手机号码"},
+                        {"sTitle": "用户名称"},
+                        {"sTitle": "注册时间"},
+                        {
+                            "sTitle": "操作",
+                            "sClass": "center",
+                            "mData": function (obj) {
+                                var sReturn = "<a class=\"ibtn\" href=\"#\" onclick=\"add_top_word('" + obj[3] + "');\">置顶</a>";
+                                return sReturn;
+                            }
+                        }
+                    ]
+                }
+        );
+    }
+
+    $(document).ready(function () {
+        $("#usual1 ul").idTabs();
+        $(".select1").uedSelect({
+            width: 345
+        });
+        $(".select2").uedSelect({
+            width: 167
+        });
+        $(".select3").uedSelect({
+            width: 100
+        });
+
+        refresh_user_table();
+    });
+</script>
+
+
+</body>
+</html>

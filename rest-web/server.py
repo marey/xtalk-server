@@ -26,6 +26,10 @@ application = tornado.web.Application([
     (r"/web/words/index", WebWordIndexHandler),
     (r"/web/words/top/add", WebWordAddTopHandler),
     (r"/web/words/top/del", WebWordTopDelHandler),
+    (r"/web/user/index", WebUserIndexHandler),
+    (r"/web/user/list", WebUserListHandler),
+    (r"/web/user/info/index", WebUserInfoIndexHandler),
+    (r"/web/user/info/word/get", WebUserInfoWordGetHandler),
 
 
 
@@ -49,6 +53,7 @@ application = tornado.web.Application([
     (r"/group/dismiss", GroupDismissHandler),
     (r"/group/report", GroupReportHandler),
     (r"/group/user/list", GroupUserListHandler),
+    (r"/sys/setting", SysSettingHandler),
 
     # TODO
     # 投诉的意见

@@ -115,7 +115,7 @@ class User(Document):
     user_sex = IntField()
     # 用户生日
     user_birthday = StringField()
-    # 用户身份
+    # 用户省份
     user_region = StringField()
     # 用户签名
     user_sign = StringField()
@@ -167,4 +167,15 @@ class ReportUser(Document):
     # 所在的群组
     group_id = StringField()
     # 举报时间
+    created = DateTimeField(default=datetime.now)
+
+# 保存系统的一个设定信息
+class SysSetting(Document):
+    # 背景图片的地址
+    main_back_img = StringField()
+    # 七牛的token
+    qiniu_token = StringField()
+    # 七牛的的token有效时间
+    qiniu_token_expires_time = DateTimeField()
+    # 创建时间
     created = DateTimeField(default=datetime.now)
