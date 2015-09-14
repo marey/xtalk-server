@@ -1235,7 +1235,7 @@ class UserGroupHandler(BaseHandler):
 
     def get_user_group(self):
         user_id = self.get_argument("user_id")
-        words = Words.objects(user__group_user_id = user_id)
+        words = Words.objects(users__group_user_id = user_id)
         if len(words) > 0:
             result = []
             for word in words:

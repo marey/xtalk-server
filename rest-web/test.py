@@ -61,3 +61,16 @@ class TestUserHandler(TestCase):
         request = urllib2.urlopen(request)
         response =  request.read()
         print response
+
+    def test_user_group(self):
+        data = {"user_id":"55efe49fb217c4686b3558a2"}
+        url = 'http://127.0.0.1:8090/user/group?'
+
+        url = url + urlencode(data)
+
+        # jdata = json.dumps(values)
+        request = urllib2.Request(url)
+        request.get_method = lambda: 'GET'
+        request = urllib2.urlopen(request)
+        response =  request.read()
+        print response
