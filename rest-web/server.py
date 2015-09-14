@@ -30,6 +30,7 @@ application = tornado.web.Application([
     (r"/web/user/list", WebUserListHandler),
     (r"/web/user/info/index", WebUserInfoIndexHandler),
     (r"/web/user/info/word/get", WebUserInfoWordGetHandler),
+    (r"/web/user/info/group/get", WebUserInfoGroupGetHandler),
 
 
 
@@ -42,6 +43,7 @@ application = tornado.web.Application([
     (r"/user/pwd", UserChangePwdHandler),
     (r"/black", UserBlackHandler),
     (r"/user/other", UserOtherHandler),
+    (r"/user/group", UserGroupHandler),
     # (r"/user/channel", UserChannelHandler),
     (r"/words", WordsHandler),
     (r"/user/search", UserSearchHandler),

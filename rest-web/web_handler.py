@@ -139,8 +139,8 @@ class WebWordSearchHandler(BaseHandler):
                                   word.created.strftime('%Y-%m-%d %H:%M:%S'),
                                   str(word.id)])
 
-        self.write({"data": data_list, "draw": 0, "recordsTotal": len(data_list), "recordsFiltered": len(data_list)})
-
+        # self.write({"data": data_list, "draw": 2, "recordsTotal": len(data_list), "recordsFiltered": len(data_list)})
+        self.write({"data": data_list})
         self.finish()
 
 
@@ -240,9 +240,29 @@ class WebUserInfoWordGetHandler(BaseHandler):
                 data_list.append([str(user_word.word_id),user_word.word,
                                   user_word.created.strftime('%Y-%m-%d %H:%M:%S'),
                                   str(word.user_count),
-                                  str(len(word.user_group)),
+                                  str(len(word.users)),
                                   word.created.strftime('%Y-%m-%d %H:%M:%S')])
 
-        self.write({"data": data_list, "draw": 0, "recordsTotal": len(data_list), "recordsFiltered": len(data_list)})
+        self.write({"data": data_list})
+        self.finish()
 
+# 查看用户加入的聊天群组
+class WebUserInfoGroupGetHandler(BaseHandler):
+    def get(self):
+        user_id = self.get_argument("user_id", default="")
+
+        words = Words.objects(users__group_user_id = user_id).order_by('-users__created')
+
+        data_list = []
+
+        if len(words) > 0:
+            for user_word in words:
+                word = Words.objects(word_id=user_word.word_id).first()
+
+                data_list.append([str(user_word.word_id),user_word.word,
+                                  user_word.created.strftime('%Y-%m-%d %H:%M:%S'),
+                                  str(word.user_count),
+                                    str(len(user_word.users))])
+
+        self.write({"data": data_list})
         self.finish()

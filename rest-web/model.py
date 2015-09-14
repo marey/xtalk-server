@@ -51,11 +51,6 @@ class Words(Document):
     user_group = EmbeddedDocumentField(WordGroup)
     # 创建时间
     created = DateTimeField(default=datetime.now)
-
-# 群组的用户列表
-class GroupUsers(Document):
-    # Word ID
-    word_id = StringField()
     # 用户
     users = ListField(EmbeddedDocumentField(WordGroup))
 

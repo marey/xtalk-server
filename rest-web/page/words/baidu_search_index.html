@@ -90,11 +90,11 @@
         </div>
 
 
-         <div id="tab3" class="tabson">
+        <div id="tab3" class="tabson">
 
             <ul class="forminfo">
                 <li><label>词条名称：<b>*</b></label><input id="txt_new_word" type="text" class="dfinput" value=""
-                                                      style="width:518px;"/></li>
+                                                       style="width:518px;"/></li>
 
                 <li><label>词条类型：<b>*</b></label>
 
@@ -122,7 +122,8 @@
 
 
                 </li>
-                <li><label>&nbsp;</label><input name="" type="button" class="btn" onclick="btnNewWord_click()" value="马上添加"/></li>
+                <li><label>&nbsp;</label><input name="" type="button" class="btn" onclick="btnNewWord_click()"
+                                                value="马上添加"/></li>
             </ul>
 
         </div>
@@ -141,14 +142,14 @@
         var word_type = $('#new_word_type').val();
         var top_flg = $('#top_flg').val();
         alert(top_flg);
-        if (word.length == 0){
+        if (word.length == 0) {
             alert("词条名称不能为空！");
             return false;
         }
-        var params = { "word": word, "word_type": word_type,"top_flg":top_flg};
+        var params = {"word": word, "word_type": word_type, "top_flg": top_flg};
 
         $.ajax({
-            url: "/web/words/add",data:params, success: function (data) {
+            url: "/web/words/add", data: params, success: function (data) {
                 alert(data);
             }
         });
@@ -192,59 +193,58 @@
         var word_type = $('#word_type').val();
         var data = {"key_word": key_word, "word_type": word_type};
 
-        $('#example').dataTable({
-                    /*基本参数设置，以下参数设置和默认效果一致*/
-                    destroy: true,
-                    "bPaginate": true, //翻页功能
-                    "bLengthChange": false, //改变每页显示数据数量
-                    "bFilter": false, //过滤功能
-                    "bSort": false, //排序功能
-                    "bInfo": true,//页脚信息
-                    "bAutoWidth": true,//自动宽度
-                    /*默认排序设置*/
-                    "aaSorting": [[2, "desc"]],//设置第5个元素为默认排序
-                    /*默认翻页样式设置*/
-                    "sPaginationType": "full_numbers",
-                    /*是否开启主题*/
-                    "bJQueryUI": false,
+        $.ajax({
+            url: "/web/words/search", data: data, success: function (data) {
+                $('#example').dataTable({
+                            /*基本参数设置，以下参数设置和默认效果一致*/
+                            destroy: true,
+                            "bPaginate": true, //翻页功能
+                            "bLengthChange": false, //改变每页显示数据数量
+                            "bFilter": false, //过滤功能
+                            "bSort": false, //排序功能
+                            "bInfo": true,//页脚信息
+                            "bAutoWidth": true,//自动宽度
+                            /*默认排序设置*/
+                            "aaSorting": [[2, "desc"]],//设置第5个元素为默认排序
+                            /*默认翻页样式设置*/
+                            "sPaginationType": "full_numbers",
+                            /*是否开启主题*/
+                            "bJQueryUI": false,
 
-                    /*语言设置*/
-                    "oLanguage": {
-                        "sLengthMenu": "每页显示 _MENU_条",
-                        "sZeroRecords": "没有找到符合条件的数据",
-                        "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
-                        "sInfoEmpty": "木有记录",
-                        "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
-                        "sSearch": "搜索：",
-                        "oPaginate": {
-                            "sFirst": "首页",
-                            "sPrevious": "前一页",
-                            "sNext": "后一页",
-                            "sLast": "尾页"
+                            /*语言设置*/
+                            "oLanguage": {
+                                "sLengthMenu": "每页显示 _MENU_条",
+                                "sZeroRecords": "没有找到符合条件的数据",
+                                "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                                "sInfoEmpty": "木有记录",
+                                "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                                "sSearch": "搜索：",
+                                "oPaginate": {
+                                    "sFirst": "首页",
+                                    "sPrevious": "前一页",
+                                    "sNext": "后一页",
+                                    "sLast": "尾页"
+                                }
+                            },
+                            data:data.data,
+                            "aoColumns": [
+                                {"sTitle": "关键词ID", "sClass": "center"},
+                                {"sTitle": "关键词"},
+                                {"sTitle": "获取时间"},
+                                {
+                                    "sTitle": "操作",
+                                    "sClass": "center",
+                                    "mData": function (obj) {
+                                        var sReturn = "<a class=\"ibtn\" href=\"#\" onclick=\"add_top_word('" + obj[3] + "');\">置顶</a>";
+                                        return sReturn;
+                                    }
+                                }
+                            ]
                         }
-                    },
-                    "processing": true,
-                    "serverSide": true,
-                    "ajax": {
-                        "url": "/web/words/search",
-                        data: data,
-                        "dataType": "json"
-                    },
-                    "aoColumns": [
-                        {"sTitle": "关键词ID", "sClass": "center"},
-                        {"sTitle": "关键词"},
-                        {"sTitle": "获取时间"},
-                        {
-                            "sTitle": "操作",
-                            "sClass": "center",
-                            "mData": function (obj) {
-                                var sReturn = "<a class=\"ibtn\" href=\"#\" onclick=\"add_top_word('" + obj[3] + "');\">置顶</a>";
-                                return sReturn;
-                            }
-                        }
-                    ]
-                }
-        );
+                );
+            }
+        });
+
     }
 
     function refresh_top_words_table() {

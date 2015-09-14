@@ -56,9 +56,12 @@ class BaseHandler(tornado.web.RequestHandler):
         setting = SysSetting.objects().first()
         access_key = "Wo12qvNKGclXn5eOx3kl4ISTCyfgkWePWH580TCB"
         secret_key = "9q1wlfzLJX7yOpFSnqr1TQK7PytY7qlgdRuTg6TI"
-        bucket_name = "xtalk"
+        bucket_name = None
+        if self.request.host.startswith("api.xtalk.com") or self._result.host.startswith("123.57.175.61"):
+            bucket_name = "xtalk-server"
+        else:
+            bucket_name = "xtalk-server-test"
         expires = 3600 * 24 * 7
-
         if setting is None:
             q = Auth(access_key, secret_key)
             token = q.upload_token(bucket_name, expires=expires)
@@ -1211,6 +1214,34 @@ class UserOtherHandler(BaseHandler):
 
         self._result = result
 
+# 获取用户的加入群组的信息
+class UserGroupHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            # 保存举报用户的信息
+            self.get_user_group()
+
+
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+    def get_user_group(self):
+        user_id = self.get_argument("user_id")
+        words = Words.objects(user__group_user_id = user_id)
+        if len(words) > 0:
+            result = []
+            for word in words:
+                result.append({"group_id":word.word_id,"group_name":word.word})
+
+            self._result = result
 
 class UserReportHandler(BaseHandler):
     @tornado.web.asynchronous
@@ -1312,12 +1343,27 @@ class GroupCreateHandler(BaseHandler):
         if word is not None:
             if word.user_group is None:
                 self.rong_create_group(user_id, word_id, p_word)
+                # 加入聊天群组
+                self.rong_join_group(user_id, word_id, p_word)
 
                 word_group = WordGroup()
                 word_group.group_user_id = user_id
                 word.update(set__user_group=word_group)
 
             word.update(inc__user_count=1)
+
+            if word.users is None:
+                word_group = WordGroup()
+                word_group.group_user_id = user_id
+                # 然后更新列表
+                word.update(push__users=word_group)
+            else:
+                word_group = WordGroup()
+                word_group.group_user_id = user_id
+
+                word.update(pull__users__group_user_id=user_id)
+                word.update(push__users=word_group)
+
         else:
             word = Words()
             word.word_id = word_id
@@ -1325,12 +1371,28 @@ class GroupCreateHandler(BaseHandler):
             word.src_type = 0
             word.word_type = None
             word.user_count = 1
+            # 创建聊天群组
             self.rong_create_group(user_id, word_id, p_word)
+            # 加入聊天群组
+            self.rong_join_group(user_id, word_id, p_word)
 
             word_group = WordGroup()
             word_group.group_user_id = user_id
             word.user_group = word_group
+
             word.save()
+
+        if word.users is None:
+            word_group = WordGroup()
+            word_group.group_user_id = user_id
+            # 然后更新列表
+            word.update(push__users=word_group)
+        else:
+            word_group = WordGroup()
+            word_group.group_user_id = user_id
+
+            word.update(pull__users__group_user_id=user_id)
+            word.update(push__users=word_group)
 
         user_word = UserWords()
         user_word.word_id = word.id
@@ -1339,28 +1401,10 @@ class GroupCreateHandler(BaseHandler):
         User.objects(id=user_id).update_one(pull__user_words__word_id=word.id)
         User.objects(id=user_id).update_one(push__user_words=user_word)
 
-        # 加入聊天群组
-        self.rong_join_group(user_id, word_id, p_word)
 
-        # 聊天室的列表
-        group_user = GroupUsers.objects(word_id=word_id).first()
-        if group_user is None:
-            group_user = GroupUsers()
-            group_user.word_id = word_id
-            # 先保存数据
-            group_user.save()
-            word_group = WordGroup()
-            word_group.group_user_id = user_id
-            # 然后更新列表
-            group_user.update(push__users=word_group)
-        else:
-            word_group = WordGroup()
-            word_group.group_user_id = user_id
+        user_group = word.user_group
 
-            GroupUsers.objects(word_id=word_id).update_one(pull__users__group_user_id=user_id)
-            GroupUsers.objects(word_id=word_id).update_one(push__users=word_group)
-
-        self._result = {"group_id": word_id, "group_name": p_word, "group_user": word.user_group.group_user_id}
+        self._result = {"group_id": word_id, "group_name": p_word, "group_user": user_group.group_user_id}
 
 
     def rong_create_group(self, user_id, word_id, p_word):
@@ -1489,7 +1533,7 @@ class GroupReportHandler(BaseHandler):
         # 判断是否大于3次举报
         count = ReportUser.objects(group_id=group_id, report_user_id=report_user_id).count()
         if count > 3:
-            GroupUsers.objects(word_id=group_id).update_one(pull__users__group_user_id=report_user_id)
+            Words.objects(word_id=group_id).update_one(pull__users__group_user_id=report_user_id)
 
             api_client = ApiClient()
             response = api_client.group_quit(report_user_id, group_id)
@@ -1527,11 +1571,16 @@ class GroupUserListHandler(BaseHandler):
         group_id = self.get_argument("group_id")
         page_index = int(self.get_argument("page_index", 0))
 
-        group_user = GroupUsers.objects(word_id=group_id).first()
+        word = Words.objects(word_id=group_id).first()
 
-        if group_user is not None and len(group_user.users) > 0:
+        if word is not None and len(word.users) > 0:
             user_list = []
-            for word_group in group_user.users[page_index * 20:page_index * 20 + 20]:
+            start_index = 0
+            end_index = 20
+            if len(word.users) > page_index * 20:
+                start_index = page_index * 20
+                end_index = page_index * 20 + 20
+            for word_group in word.users[start_index:end_index]:
                 user = User.objects(id=word_group.group_user_id).first()
                 if user is not None:
                     user_list.append({"user_id": str(user.id), "name": user.user_name, "photo": user.user_photo_url})

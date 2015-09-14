@@ -63,6 +63,7 @@
                 <li><label>头像地址：<b>*</b></label><input id="txt_new_user_photo" type="text" class="dfinput" value=""
                                                        style="width:518px;"/></li>
                 <li><label>用户性别：<b>*</b></label>
+
                     <div class="vocation">
                         <select id="slt_new_user_sex" class="select3">
                             <option value="1">男</option>
@@ -70,7 +71,7 @@
                         </select>
                     </div>
                 </li>
-                <li><label>&nbsp;</label><input name="" type="button" class="btn" onclick="btnNewWord_click()"
+                <li><label>&nbsp;</label><input name="" type="button" class="btn" onclick="add_new_user_click()"
                                                 value="马上添加"/></li>
             </ul>
 
@@ -92,30 +93,30 @@
 
     function add_new_user_click() {
         var id = $('#txt_new_user_phone').val();
-        if (id.length == 0){
+        if (id.length == 0) {
             alert("用户号码不能为空！");
             return false;
         }
         var pwd = $('#txt_new_user_pwd').val();
-        if (pwd.length == 0){
+        if (pwd.length == 0) {
             alert("用户密码不能为空！");
             return false;
         }
         var name = $('#txt_new_user_name').val();
-        if (name.length == 0){
+        if (name.length == 0) {
             alert("用户名称不能为空！");
             return false;
         }
         var photo = $('#txt_new_user_photo').val();
-        if (photo.length == 0){
+        if (photo.length == 0) {
             alert("用户头像不能为空！");
             return false;
         }
         var sex = $('#slt_new_user_sex').val();
-        var params = {"id": id, "pwd": pwd,"name":name,"photo":photo,"sex":sex};
+        var params = {"type": 2, "id": id, "pwd": pwd, "name": name, "photo": photo, "sex": sex};
         $.ajax({
-            url: "/web/words/top/add",type: 'POST', data: params, success: function (data) {
-                alert("置顶成功！");
+            url: "/user", data: params, success: function (data) {
+                alert("添加成功！");
             }
         });
     }
@@ -186,7 +187,7 @@
                             "sTitle": "用户ID",
                             "sClass": "center",
                             "mData": function (obj) {
-                                var sReturn = "<a target=\"rightFrame\" href=\"/web/user/info/index?user_id=" + obj[1] +"\" >" + obj[1] + "</a>";
+                                var sReturn = "<a target=\"rightFrame\" href=\"/web/user/info/index?user_id=" + obj[1] + "\" >" + obj[1] + "</a>";
                                 return sReturn;
                             }
                         },
