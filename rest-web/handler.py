@@ -57,10 +57,10 @@ class BaseHandler(tornado.web.RequestHandler):
         access_key = "Wo12qvNKGclXn5eOx3kl4ISTCyfgkWePWH580TCB"
         secret_key = "9q1wlfzLJX7yOpFSnqr1TQK7PytY7qlgdRuTg6TI"
         bucket_name = None
-        if self.request.host.startswith("api.xtalk.com") or self._result.host.startswith("123.57.175.61"):
-            bucket_name = "xtalk-server"
-        else:
-            bucket_name = "xtalk-server-test"
+        #if self.request.host.startswith("api.xtalk.com") or self._result.host.startswith("123.57.175.61"):
+            # bucket_name = "xtalk-server"
+        # else:
+        bucket_name = "xtalk-server-test"
         expires = 3600 * 24 * 7
         if setting is None:
             q = Auth(access_key, secret_key)
