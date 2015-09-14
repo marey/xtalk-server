@@ -14,7 +14,7 @@ from rong import *
 
 class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
-        connect('project1', host='mongodb://127.0.0.1:27017/test')
+        connect('project1', host='mongodb://182.92.78.106:27017/test')
         self._response = {"code": "200", "message": "", "result": ""}
         self._result = None
 
@@ -82,7 +82,78 @@ class BaseHandler(tornado.web.RequestHandler):
             setting.qiniu_token_expires_time = datetime.datetime.now() + datetime.timedelta(seconds=expires)
             setting.save()
         return setting
+    # 创建并加入群组
+    def create_group(self):
+        user_id = self.get_argument("user_id")
+        p_word = self.get_argument("word")
+        word_id = utils.md5(p_word)
+        word = Words.objects(word_id=word_id).first()
 
+        if word is not None:
+            if word.user_group is None:
+                self.rong_create_group(user_id, word_id, p_word)
+                # 加入聊天群组
+                self.rong_join_group(user_id, word_id, p_word)
+
+                word_group = WordGroup()
+                word_group.group_user_id = user_id
+                word.update(set__user_group=word_group)
+
+            word.update(inc__user_count=1)
+
+            if word.users is None:
+                word_group = WordGroup()
+                word_group.group_user_id = user_id
+                # 然后更新列表
+                word.update(push__users=word_group)
+            else:
+                word_group = WordGroup()
+                word_group.group_user_id = user_id
+
+                word.update(pull__users__group_user_id=user_id)
+                word.update(push__users=word_group)
+
+        else:
+            word = Words()
+            word.word_id = word_id
+            word.word = p_word
+            word.src_type = 6
+            word.word_type = None
+            word.user_count = 1
+            # 创建聊天群组
+            self.rong_create_group(user_id, word_id, p_word)
+            # 加入聊天群组
+            self.rong_join_group(user_id, word_id, p_word)
+
+            word_group = WordGroup()
+            word_group.group_user_id = user_id
+            word.user_group = word_group
+
+            word.save()
+
+        if word.users is None:
+            word_group = WordGroup()
+            word_group.group_user_id = user_id
+            # 然后更新列表
+            word.update(push__users=word_group)
+        else:
+            word_group = WordGroup()
+            word_group.group_user_id = user_id
+
+            word.update(pull__users__group_user_id=user_id)
+            word.update(push__users=word_group)
+
+        user_word = UserWords()
+        user_word.word_id = word.id
+        user_word.word = word.word
+        # 先删后插
+        User.objects(id=user_id).update_one(pull__user_words__word_id=word.id)
+        User.objects(id=user_id).update_one(push__user_words=user_word)
+
+
+        user_group = word.user_group
+
+        self._result = {"group_id": word_id, "group_name": p_word, "group_user": user_group.group_user_id}
 
 class UserLoginHandler(BaseHandler):
     @tornado.web.asynchronous
@@ -562,38 +633,14 @@ class UserSearchHandler(BaseHandler):
             self.check_params_exists("user_id")
             # 检查参数的传入
             self.check_params_exists("word")
-            # 保存需要查询的词
-            self.save_search_word()
+            # 加入群组
+            self.create_group()
 
         except tornado.web.HTTPError, e:
             self._response["code"] = e.status_code
             self._response["message"] = e.log_message.format(e.args)
         self.on_write()
         self.finish()
-
-    def save_search_word(self):
-        user_id = self.get_argument("user_id")
-        p_word = self.get_argument("word")
-        word_id = utils.md5(p_word)
-        word = Words.objects(word_id=word_id).first()
-        if word is None:
-            word = Words()
-            word.word_id = word_id
-            word.word = p_word
-            word.src_type = 0
-            word.word_type = None
-            word.user_count = 1
-
-            word.save()
-        else:
-            word.update(inc__user_count=1)
-
-        user_word = UserWords()
-        user_word.word_id = word.word_id
-        user_word.word = word.word
-        # 先删后插
-        User.objects(id=user_id).update_one(pull__user_words__word_id=word.word_id)
-        User.objects(id=user_id).update_one(push__user_words=user_word)
 
 
 class WordsHandler(BaseHandler):
@@ -743,7 +790,6 @@ class WordsHandler(BaseHandler):
 
         return result
 
-
     def get_film_words(self):
         result = {"type": 2, "type_name": "影视综艺"}
         index = int(self.get_argument("page_index", 0))
@@ -864,7 +910,6 @@ class WordsHandler(BaseHandler):
         result["words"] = word_list
 
         return result
-
 
     def get_new_created_words(self):
         result = {"type": 4, "type_name": "新创词条"}
@@ -1334,78 +1379,6 @@ class GroupCreateHandler(BaseHandler):
         self.on_write()
         self.finish()
 
-    def create_group(self):
-        user_id = self.get_argument("user_id")
-        p_word = self.get_argument("word")
-        word_id = utils.md5(p_word)
-        word = Words.objects(word_id=word_id).first()
-
-        if word is not None:
-            if word.user_group is None:
-                self.rong_create_group(user_id, word_id, p_word)
-                # 加入聊天群组
-                self.rong_join_group(user_id, word_id, p_word)
-
-                word_group = WordGroup()
-                word_group.group_user_id = user_id
-                word.update(set__user_group=word_group)
-
-            word.update(inc__user_count=1)
-
-            if word.users is None:
-                word_group = WordGroup()
-                word_group.group_user_id = user_id
-                # 然后更新列表
-                word.update(push__users=word_group)
-            else:
-                word_group = WordGroup()
-                word_group.group_user_id = user_id
-
-                word.update(pull__users__group_user_id=user_id)
-                word.update(push__users=word_group)
-
-        else:
-            word = Words()
-            word.word_id = word_id
-            word.word = p_word
-            word.src_type = 0
-            word.word_type = None
-            word.user_count = 1
-            # 创建聊天群组
-            self.rong_create_group(user_id, word_id, p_word)
-            # 加入聊天群组
-            self.rong_join_group(user_id, word_id, p_word)
-
-            word_group = WordGroup()
-            word_group.group_user_id = user_id
-            word.user_group = word_group
-
-            word.save()
-
-        if word.users is None:
-            word_group = WordGroup()
-            word_group.group_user_id = user_id
-            # 然后更新列表
-            word.update(push__users=word_group)
-        else:
-            word_group = WordGroup()
-            word_group.group_user_id = user_id
-
-            word.update(pull__users__group_user_id=user_id)
-            word.update(push__users=word_group)
-
-        user_word = UserWords()
-        user_word.word_id = word.id
-        user_word.word = word.word
-        # 先删后插
-        User.objects(id=user_id).update_one(pull__user_words__word_id=word.id)
-        User.objects(id=user_id).update_one(push__user_words=user_word)
-
-
-        user_group = word.user_group
-
-        self._result = {"group_id": word_id, "group_name": p_word, "group_user": user_group.group_user_id}
-
 
     def rong_create_group(self, user_id, word_id, p_word):
         api_client = ApiClient()
@@ -1589,6 +1562,8 @@ class GroupUserListHandler(BaseHandler):
                 self._result = user_list
 
 class SysSettingHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
     def get(self):
         try:
             # 检查参数的传入
@@ -1599,6 +1574,29 @@ class SysSettingHandler(BaseHandler):
             result["main_back_img"] = setting.main_back_img
             result["qiniu_token"] = setting.qiniu_token
             self._result = result
+        except tornado.web.HTTPError, e:
+            self._response["code"] = e.status_code
+            self._response["message"] = e.log_message.format(e.args)
+
+        self.on_write()
+        self.finish()
+
+class GroupHandler(BaseHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self):
+        try:
+            # 检查参数的传入
+            self.check_params_exists("user_id")
+            self.check_params_exists("group_id")
+            group_id = self.get_argument("group_id")
+            word = Words.objects(word_id = group_id).first()
+            if word is not None:
+                result = {}
+                result["group_id"] = word.word_id
+                result["group_name"] = word.word
+                self._result = result
+
         except tornado.web.HTTPError, e:
             self._response["code"] = e.status_code
             self._response["message"] = e.log_message.format(e.args)

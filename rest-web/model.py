@@ -38,7 +38,7 @@ class Words(Document):
     word_id = StringField()
     # 词条的类型
     # 1.百度热搜
-    # 2.个人search
+    # 6
     src_type = IntField()
     # 当前的词汇
     word = StringField()

@@ -74,3 +74,29 @@ class TestUserHandler(TestCase):
         request = urllib2.urlopen(request)
         response =  request.read()
         print response
+
+    def test_user_search(self):
+        data = {"user_id":"55f6721cb217c47d78b3f6bf","word":"父亲湿透为儿撑伞"}
+        url = 'http://127.0.0.1:8090/user/search?'
+
+        url = url + urlencode(data)
+
+        # jdata = json.dumps(values)
+        request = urllib2.Request(url)
+        request.get_method = lambda: 'POST'
+        request = urllib2.urlopen(request)
+        response =  request.read()
+        print response
+
+    def test_user_search(self):
+        data = {"user_id":"55f6721cb217c47d78b3f6bf","group_id":"5929782412a71401aa1a1b60842e97d0"}
+        url = 'http://127.0.0.1:8090/group?'
+
+        url = url + urlencode(data)
+
+        # jdata = json.dumps(values)
+        request = urllib2.Request(url)
+        request.get_method = lambda: 'GET'
+        request = urllib2.urlopen(request)
+        response =  request.read()
+        print response

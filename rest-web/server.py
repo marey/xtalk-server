@@ -49,7 +49,7 @@ application = tornado.web.Application([
     (r"/user/search", UserSearchHandler),
     (r"/user/report", UserReportHandler),
     (r"/os/version", OsVersionHandler),
-
+    (r"/group", GroupHandler),
     (r"/group/create", GroupCreateHandler),
     # (r"/group/join", GroupJoinHandler),
     (r"/group/dismiss", GroupDismissHandler),
