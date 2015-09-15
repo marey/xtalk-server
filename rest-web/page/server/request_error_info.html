@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>用户管理-用户列表</title>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/datatable/media/css/jquery.dataTables.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/static/datatable/media/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="/static/js/select-ui.min.js"></script>
+    <link href="/static/css/select.css" rel="stylesheet" type="text/css"/>
+</head>
+
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">服务器管理</a></li>
+        <li><a href="#">服务器请求异常</a></li>
+    </ul>
+</div>
+<div class="mainindex">
+
+
+    <div id="usual1" class="usual">
+
+        <div id="tab1" class="tabson">
+            <ul class="seachform">
+
+                <li><label>关键字</label><input id="txt_word" type="text" class="scinput" value=""/>
+                </li>
+                <li><label>&nbsp;</label><input name="" type="button" class="scbtn" onclick="btnSearch_click()"
+                                                value="查询"/></li>
+            </ul>
+
+            <table id="example" class="display" cellspacing="0" width="100%">
+            </table>
+        </div>
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript" charset="utf8" src="/static/datatable/media/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+
+
+    function btnSearch_click() {
+        refresh_table();
+    }
+
+    function refresh_table() {
+        var uri = $('#txt_word').val();
+        var data = {"uri": uri};
+
+        $.ajax({
+            url: "/web/server/request/error/info/search", data: data, success: function (data) {
+                $('#example').dataTable({
+                            /*基本参数设置，以下参数设置和默认效果一致*/
+                            destroy: true,
+                            "bPaginate": true, //翻页功能
+                            "bLengthChange": false, //改变每页显示数据数量
+                            "bFilter": false, //过滤功能
+                            "bSort": false, //排序功能
+                            "bInfo": true,//页脚信息
+                            "bAutoWidth": true,//自动宽度
+                            /*默认翻页样式设置*/
+                            "sPaginationType": "full_numbers",
+                            /*是否开启主题*/
+                            "bJQueryUI": false,
+
+                            /*语言设置*/
+                            "oLanguage": {
+                                "sLengthMenu": "每页显示 _MENU_条",
+                                "sZeroRecords": "没有找到符合条件的数据",
+                                "sInfo": "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+                                "sInfoEmpty": "木有记录",
+                                "sInfoFiltered": "(从 _MAX_ 条记录中过滤)",
+                                "sSearch": "搜索：",
+                                "oPaginate": {
+                                    "sFirst": "首页",
+                                    "sPrevious": "前一页",
+                                    "sNext": "后一页",
+                                    "sLast": "尾页"
+                                }
+                            },
+                            data:data.data,
+                            "aoColumns": [
+                        {"sTitle": "方法类型"},
+                        {"sTitle": "请求参数"},
+                                    {"sTitle": "错误信息"},
+                        {"sTitle": "创建时间"},
+                    ]
+                        }
+                );
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#usual1 ul").idTabs();
+        $(".select1").uedSelect({
+            width: 345
+        });
+        $(".select2").uedSelect({
+            width: 167
+        });
+        $(".select3").uedSelect({
+            width: 100
+        });
+
+        refresh_table();
+    });
+</script>
+
+
+</body>
+</html>

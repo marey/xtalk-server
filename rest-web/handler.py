@@ -50,6 +50,12 @@ class BaseHandler(tornado.web.RequestHandler):
             if exec_info is not None and len(exec_info) == 3:
                 response_result["message"] = MessageUtils.ERROR_0015.format(exec_info[1])
 
+                sys_error = SysError()
+                sys_error.method_name = self.request.method
+                sys_error.error_info = exec_info[1].message
+                sys_error.uri = self.request.uri
+                sys_error.save()
+
             self.write(response_result)
 
     def get_sys_setting(self):

@@ -31,7 +31,8 @@ application = tornado.web.Application([
     (r"/web/user/info/index", WebUserInfoIndexHandler),
     (r"/web/user/info/word/get", WebUserInfoWordGetHandler),
     (r"/web/user/info/group/get", WebUserInfoGroupGetHandler),
-
+    (r"/web/server/request/error/info/index", WebServerRequestErrorInfoIndexHandler),
+    (r"/web/server/request/error/info/search", WebServerRequestErrorInfoSearchHandler),
 
 
 

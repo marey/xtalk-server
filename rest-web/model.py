@@ -174,3 +174,14 @@ class SysSetting(Document):
     qiniu_token_expires_time = DateTimeField()
     # 创建时间
     created = DateTimeField(default=datetime.now)
+
+# 保存服务器的请求日志
+class SysError(Document):
+    # 请求时间
+    created = DateTimeField(default=datetime.now)
+    # 方法名称
+    method_name = StringField()
+    # 请求的URI
+    uri = StringField()
+    # 错误信息
+    error_info = StringField()

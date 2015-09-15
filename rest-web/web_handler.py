@@ -266,3 +266,29 @@ class WebUserInfoGroupGetHandler(BaseHandler):
 
         self.write({"data": data_list})
         self.finish()
+
+
+class WebServerRequestErrorInfoIndexHandler(BaseHandler):
+    def get(self):
+        self.render("server/request_error_info.html")
+
+class WebServerRequestErrorInfoSearchHandler(BaseHandler):
+    def get(self):
+        uri = self.get_argument("uri", default="")
+
+        if len(uri) == 0:
+            error_info_list = SysError.objects().order_by('-created')
+        else:
+            error_info_list = SysError.objects(uri__icontains = uri).order_by('-created')
+
+        data_list = []
+
+        if len(error_info_list) > 0:
+            for error_info in error_info_list:
+
+                data_list.append([error_info.method_name,error_info.uri,error_info.error_info,
+                                  error_info.created.strftime('%Y-%m-%d %H:%M:%S'),
+                                  ])
+
+        self.write({"data": data_list})
+        self.finish()
