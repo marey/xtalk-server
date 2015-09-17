@@ -1573,7 +1573,6 @@ class SysSettingHandler(BaseHandler):
     def get(self):
         try:
             # 检查参数的传入
-            self.check_params_exists("user_id")
             setting = self.get_sys_setting()
 
             result = {}
