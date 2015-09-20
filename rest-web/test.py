@@ -100,3 +100,87 @@ class TestUserHandler(TestCase):
         request = urllib2.urlopen(request)
         response =  request.read()
         print response
+
+    def test_words_get(self):
+        data = {"user_id": "55f6721cb217c47d78b3f6bf", "type": "0"}
+        url = 'http://127.0.0.1:8090/words?'
+
+        url = url + urlencode(data)
+
+        # jdata = json.dumps(values)
+        request = urllib2.Request(url)
+        request.get_method = lambda: 'GET'
+        request = urllib2.urlopen(request)
+        response = request.read()
+        print response
+
+    def test_web_words_add(self):
+        word_list = []
+        word_list.append("上课")
+        word_list.append("上自习")
+        word_list.append("吃东西")
+        word_list.append("失眠")
+        word_list.append("看书")
+        word_list.append("乘车")
+        word_list.append("洗澡")
+        word_list.append("逛街购物")
+        word_list.append("旅行")
+        word_list.append("拉粑粑")
+        word_list.append("遛狗")
+        word_list.append("喝咖啡")
+        word_list.append("酒吧夜店")
+        word_list.append("看球")
+        word_list.append("k歌")
+        word_list.append("打游戏")
+        word_list.append("打台球")
+        word_list.append("听歌")
+        word_list.append("听电台")
+        word_list.append("看电影")
+        word_list.append("看美剧")
+        word_list.append("看动漫")
+        word_list.append("跑步")
+        word_list.append("散步")
+        word_list.append("健身")
+        word_list.append("瑜伽")
+        word_list.append("打篮球")
+        word_list.append("踢足球")
+        word_list.append("游泳")
+        word_list.append("玩桌游")
+        word_list.append("听讲座")
+        word_list.append("骑马")
+        word_list.append("飙车")
+        word_list.append("钓鱼")
+        word_list.append("听音乐会")
+        word_list.append("玩音乐节")
+        word_list.append("看话剧")
+        word_list.append("开会")
+        word_list.append("加班")
+        word_list.append("堵车")
+        word_list.append("滚床单")
+        word_list.append("耍孩子")
+        word_list.append("看片儿")
+        word_list.append("做饭")
+        word_list.append("画画")
+        word_list.append("写作")
+        word_list.append("SPA")
+        word_list.append("逛展会")
+        word_list.append("遛狗")
+        word_list.append("做饭")
+        word_list.append("撕逼")
+        word_list.append("玩手机")
+        word_list.append("创业")
+        word_list.append("哭泣")
+        word_list.append("生病")
+        word_list.append("不开心")
+        for word in word_list:
+            data = {"word": word, "word_type": "5"}
+            url = 'http://127.0.0.1:8090/web/words/add?'
+
+            url = url + urlencode(data)
+
+            # jdata = json.dumps(values)
+            request = urllib2.Request(url)
+            request.get_method = lambda: 'GET'
+            request = urllib2.urlopen(request)
+            response = request.read()
+            print response

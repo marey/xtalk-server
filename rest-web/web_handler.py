@@ -43,32 +43,35 @@ class WebWordsGetHandler(BaseHandler):
 
 class WebWordsAddHandler(BaseHandler):
     def get(self):
-        word = self.get_argument("word")
+        word_list = self.get_argument("word", default="").split("\n")
+        if len(word_list) > 0:
+            for word_item in word_list:
+                word = word_item.strip()
+                word_id = utils.md5(word)
+                record_word = Words.objects(word_id=word_id).first()
+                if record_word is not None:
+                    self.write("该词条已经存在！")
+                else:
+                    word_type = int(self.get_argument("word_type", default=1))
+                    record_word = Words()
 
-        word_id = utils.md5(word)
-        record_word = Words.objects(word_id=word_id).first()
-        if record_word is not None:
-            self.write("该词条已经存在！")
-        else:
-            word_type = int(self.get_argument("word_type",default=1))
-            record_word = Words()
+                    record_word.word_id = word_id
+                    record_word.word = word
+                    record_word.src_type = word_type
+                    record_word.word_type = 1
+                    record_word.save()
 
-            record_word.word_id = word_id
-            record_word.word = word
-            record_word.src_type = word_type
-            record_word.word_type = 1
-            record_word.save()
+                    top_flg = int(self.get_argument("word_type", default=1))
+                    if top_flg == 1:
+                        top_word = TopWords()
+                        top_word.type = record_word.src_type
+                        top_word.word_id = record_word.word_id
+                        top_word.word = record_word.word
+                        top_word.save()
 
-            top_flg = int(self.get_argument("word_type",default=1))
-            if top_flg == 1:
-                top_word = TopWords()
-                top_word.type = record_word.src_type
-                top_word.word_id = record_word.word_id
-                top_word.word = record_word.word
-                top_word.save()
+                    self.write("词条添加成功！")
 
-            self.write("词条添加成功！")
-            self.finish()
+        self.finish()
 
 
 class WebWordIndexHandler(BaseHandler):
@@ -118,8 +121,7 @@ class WebWordSearchHandler(BaseHandler):
     def get(self):
         key_word = self.get_argument("key_word", default="")
         type = int(self.get_argument("word_type", default=0))
-        result = []
-        words = None
+
         if type == 0:
             if len(key_word) == 0:
                 words = Words.objects().order_by('-created')[:100]

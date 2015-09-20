@@ -39,19 +39,19 @@
         <div id="tab1" class="tabson">
             <ul class="seachform">
 
-                <li><label>检索词</label><input name="key_word" type="text" class="scinput" value="{{key_word}}"/>
+                <li><label>检索词</label><input id="key_word" type="text" class="scinput" value="{{key_word}}"/>
                 </li>
                 <li><label>词汇类型</label>
 
                     <div class="vocation">
-                        <select name="word_type" class="select3">
+                        <select id="word_type" class="select3">
                             <option value="0">全部</option>
                             <option value="1">百度热搜</option>
                             <option value="2">影视综艺</option>
                             <option value="3">热门词条</option>
                             <option value="4">新创词条</option>
                             <option value="5">状态标签</option>
-                        </select>
+                            </selectid>
                     </div>
                 </li>
                 <li><label>&nbsp;</label><input name="" type="button" class="scbtn" onclick="btnSearch_click()"
@@ -93,8 +93,8 @@
         <div id="tab3" class="tabson">
 
             <ul class="forminfo">
-                <li><label>词条名称：<b>*</b></label><input id="txt_new_word" type="text" class="dfinput" value=""
-                                                       style="width:518px;"/></li>
+                <li><label>词条名称：<b>*</b></label><textarea id="txt_new_word" type="text" class="dfinput" value=""
+                                                          style="width:518px;height: 400px;"></textarea></li>
 
                 <li><label>词条类型：<b>*</b></label>
 
@@ -156,13 +156,7 @@
     }
 
     function btnSearch_click() {
-        var key_word = $('#key_word').text();
-        var word_type = $('#word_type').select();
-        $.ajax({
-            url: "/web/words/search", data: {"key_word": key_word, "word_type": word_type}, success: function (data) {
-                $('#top_word_body').html(data);
-            }
-        });
+        refresh_words_table();
     }
 
     function btnTopSearch_click() {
@@ -319,8 +313,6 @@
         $(".select3").uedSelect({
             width: 100
         });
-
-        refresh_words_table();
     });
 </script>
 
